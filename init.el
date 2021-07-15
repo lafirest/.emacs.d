@@ -217,7 +217,32 @@
   (setq plantuml-output-type "txt")
   (setq org-plantuml-jar-path (expand-file-name "~/.local/lib/plantuml.jar"))
   (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
-  (org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t))))
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               '((plantuml . t)
+                                 (csharp . t))))
+
+(use-package org-static-blog
+  :config
+  (setq org-static-blog-publish-title "Cogito, ergo sum")
+  (setq org-static-blog-publish-url "https://lafirest.github.io/")
+  (setq org-static-blog-publish-directory "~/lernu/lafirest/docs/")
+  (setq org-static-blog-posts-directory "~/lernu/lafirest/posts/")
+  (setq org-static-blog-drafts-directory "~/lernu/lafirest/drafts/")
+  (setq org-static-blog-enable-tags t)
+  (setq org-export-with-toc t)
+  (setq org-export-with-section-numbers t)
+  (setq org-static-blog-use-preview t)
+  
+  ;; This header is inserted into the <head> section of every page:
+  ;;   (you will need to create the style sheet at
+  ;;    ~/projects/blog/static/style.css
+  ;;    and the favicon at
+  ;;    ~/projects/blog/static/favicon.ico)
+  (setq org-static-blog-page-header
+        "<meta name=\"author\" content=\"firest\">
+<meta name=\"referrer\" content=\"no-referrer\">
+<link href= \"static/style.css\" rel=\"stylesheet\" type=\"text/css\" />
+<link rel=\"icon\" href=\"static/favicon.ico\">"))
 
 (linum-mode)
 (global-linum-mode)
@@ -232,9 +257,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("c8e076f0e2df414c02fdb46b09b735628e73c73f72f9d78392edf99de7d86977" "d2e0c53dbc47b35815315fae5f352afd2c56fa8e69752090990563200daae434" "c9ddf33b383e74dac7690255dd2c3dfa1961a8e8a1d20e401c6572febef61045" "bf798e9e8ff00d4bf2512597f36e5a135ce48e477ce88a0764cfb5d8104e8163" "36ca8f60565af20ef4f30783aa16a26d96c02df7b4e54e9900a5138fb33808da" "e6df46d5085fde0ad56a46ef69ebb388193080cc9819e2d6024c9c6e27388ba9" "549ccbd11c125a4e671a1e8d3609063a91228e918ffb269e57bd2cd2c0a6f1c6" default))
+   (quote
+    ("c8e076f0e2df414c02fdb46b09b735628e73c73f72f9d78392edf99de7d86977" "d2e0c53dbc47b35815315fae5f352afd2c56fa8e69752090990563200daae434" "c9ddf33b383e74dac7690255dd2c3dfa1961a8e8a1d20e401c6572febef61045" "bf798e9e8ff00d4bf2512597f36e5a135ce48e477ce88a0764cfb5d8104e8163" "36ca8f60565af20ef4f30783aa16a26d96c02df7b4e54e9900a5138fb33808da" "e6df46d5085fde0ad56a46ef69ebb388193080cc9819e2d6024c9c6e27388ba9" "549ccbd11c125a4e671a1e8d3609063a91228e918ffb269e57bd2cd2c0a6f1c6" default)))
  '(package-selected-packages
-   '(plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui lsp-mode helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent)))
+   (quote
+    (htmlize plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui lsp-mode helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
