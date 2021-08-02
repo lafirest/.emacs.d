@@ -53,8 +53,8 @@
 
 (use-package lsp-mode
   :config
-  (setq lsp-erlang-server-path "/usr/local/bin/erlang_ls")
-                                        ;  (setq lsp-log-io t) 
+  (setq lsp-erlang-server-path "~/.local/bin/erlang_ls")
+  ;(setq lsp-log-io t)
   :hook ((prog-mode . lsp-mode)
          (erlang-mode . lsp)))
 
@@ -75,13 +75,13 @@
 					;  :hook (lsp-mode . lsp-ivy-workspace-symbol))
 
 (use-package lsp-treemacs
-  :config (lsp-treemacs-sync-mode 1)
+  ;:config (lsp-treemacs-sync-mode 1)
   :bind
   ("C-c l e" . lsp-treemacs-errors-list)
   ("C-c l s" . lsp-treemacs-symbols)
   ("C-c l r" . lsp-treemacs-references)
   ("C-c l i" . lsp-treemacs-implementations)
-  ("C-c l c" . lsp-treemacs-type-hierarchy))
+  ("C-c l h" . lsp-treemacs-type-hierarchy))
 
 (use-package flycheck)
 
@@ -184,7 +184,7 @@
 (use-package treemacs-projectile
   :after (treemacs projectile)
   :ensure t)
- 
+
 (use-package treemacs-magit
   :after (treemacs magit)
   :ensure t)
@@ -221,9 +221,16 @@
   (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
   (org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t))))
 
+(use-package telephone-line
+  :config
+  (setq telephone-line-height 24
+        telephone-line-evil-use-short-tag t)
+  (telephone-line-mode 1))
+
 (linum-mode)
 (global-linum-mode)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+(setq create-lockfiles nil)
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
@@ -240,11 +247,10 @@
  '(custom-safe-themes
    '("c8e076f0e2df414c02fdb46b09b735628e73c73f72f9d78392edf99de7d86977" "d2e0c53dbc47b35815315fae5f352afd2c56fa8e69752090990563200daae434" "c9ddf33b383e74dac7690255dd2c3dfa1961a8e8a1d20e401c6572febef61045" "bf798e9e8ff00d4bf2512597f36e5a135ce48e477ce88a0764cfb5d8104e8163" "36ca8f60565af20ef4f30783aa16a26d96c02df7b4e54e9900a5138fb33808da" "e6df46d5085fde0ad56a46ef69ebb388193080cc9819e2d6024c9c6e27388ba9" "549ccbd11c125a4e671a1e8d3609063a91228e918ffb269e57bd2cd2c0a6f1c6" default))
  '(package-selected-packages
-   '(markdown-preview-mode undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui lsp-mode helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent)))
+   '(telephone-line vterm multiple-cursors markdown-preview-mode undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui lsp-mode helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Sarasa Mono SC Nerd" :foundry "????" :slant normal :weight normal :height 143 :width normal)))))
-
+ '(default ((t (:family "JetBrains Mono" normal :weight normal :width normal)))))
