@@ -219,7 +219,32 @@
   (setq plantuml-output-type "txt")
   (setq org-plantuml-jar-path (expand-file-name "~/.local/lib/plantuml.jar"))
   (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
-  (org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t))))
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               '((plantuml . t)
+                                 (csharp . t))))
+
+(use-package org-static-blog
+  :config
+  (setq org-static-blog-publish-title "Cogito, ergo sum")
+  (setq org-static-blog-publish-url "https://lafirest.github.io/")
+  (setq org-static-blog-publish-directory "~/lernu/lafirest/docs/")
+  (setq org-static-blog-posts-directory "~/lernu/lafirest/posts/")
+  (setq org-static-blog-drafts-directory "~/lernu/lafirest/drafts/")
+  (setq org-static-blog-enable-tags t)
+  (setq org-export-with-toc t)
+  (setq org-export-with-section-numbers t)
+  (setq org-static-blog-use-preview t)
+  
+  ;; This header is inserted into the <head> section of every page:
+  ;;   (you will need to create the style sheet at
+  ;;    ~/projects/blog/static/style.css
+  ;;    and the favicon at
+  ;;    ~/projects/blog/static/favicon.ico)
+  (setq org-static-blog-page-header
+        "<meta name=\"author\" content=\"firest\">
+<meta name=\"referrer\" content=\"no-referrer\">
+<link href= \"static/style.css\" rel=\"stylesheet\" type=\"text/css\" />
+<link rel=\"icon\" href=\"static/favicon.ico\">"))
 
 (use-package telephone-line
   :config
