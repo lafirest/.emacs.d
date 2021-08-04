@@ -234,7 +234,7 @@
   (setq org-export-with-toc t)
   (setq org-export-with-section-numbers t)
   (setq org-static-blog-use-preview t)
-  
+
   ;; This header is inserted into the <head> section of every page:
   ;;   (you will need to create the style sheet at
   ;;    ~/projects/blog/static/style.css
@@ -278,4 +278,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "JetBrains Mono" normal :weight normal :width normal)))))
+ '(default ((t (:family "JetBrains Mono" normal :weight normal :width normal :height 140)))))
