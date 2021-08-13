@@ -252,6 +252,35 @@
         telephone-line-evil-use-short-tag t)
   (telephone-line-mode 1))
 
+(use-package switch-window
+  :config
+  (global-set-key (kbd "C-x o") 'switch-window)
+  (global-set-key (kbd "C-x 1") 'switch-window-then-maximize)
+  (global-set-key (kbd "C-x 2") 'switch-window-then-split-below)
+  (global-set-key (kbd "C-x 3") 'switch-window-then-split-right)
+  (global-set-key (kbd "C-x 0") 'switch-window-then-delete)
+
+  (global-set-key (kbd "C-x 4 d") 'switch-window-then-dired)
+  (global-set-key (kbd "C-x 4 f") 'switch-window-then-find-file)
+  (global-set-key (kbd "C-x 4 m") 'switch-window-then-compose-mail)
+  (global-set-key (kbd "C-x 4 r") 'switch-window-then-find-file-read-only)
+
+  (global-set-key (kbd "C-x 4 C-f") 'switch-window-then-find-file)
+  (global-set-key (kbd "C-x 4 C-o") 'switch-window-then-display-buffer)
+
+  (global-set-key (kbd "C-x 4 0") 'switch-window-then-kill-buffer))
+
+(use-package beacon
+  :config
+  (beacon-mode 1))
+
+(defun prog-face ()
+  (face-remap-add-relative 'font-lock-function-name-face
+                           :height 160
+                           :underline t))
+
+(add-hook 'prog-mode-hook #'prog-face)
+
 (linum-mode)
 (global-linum-mode)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -272,10 +301,12 @@
  '(custom-safe-themes
    '("c8e076f0e2df414c02fdb46b09b735628e73c73f72f9d78392edf99de7d86977" "d2e0c53dbc47b35815315fae5f352afd2c56fa8e69752090990563200daae434" "c9ddf33b383e74dac7690255dd2c3dfa1961a8e8a1d20e401c6572febef61045" "bf798e9e8ff00d4bf2512597f36e5a135ce48e477ce88a0764cfb5d8104e8163" "36ca8f60565af20ef4f30783aa16a26d96c02df7b4e54e9900a5138fb33808da" "e6df46d5085fde0ad56a46ef69ebb388193080cc9819e2d6024c9c6e27388ba9" "549ccbd11c125a4e671a1e8d3609063a91228e918ffb269e57bd2cd2c0a6f1c6" default))
  '(package-selected-packages
-   '(telephone-line vterm multiple-cursors markdown-preview-mode undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui lsp-mode helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent)))
+   '(beacon telephone-line vterm multiple-cursors markdown-preview-mode undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui lsp-mode helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "JetBrains Mono" normal :weight normal :width normal :height 140)))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "#3F3F3F" :foreground "#DCDCCC" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "nil" :family "JetBrains Mono")))))
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
