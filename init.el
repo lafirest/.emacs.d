@@ -74,13 +74,15 @@
   (setq lsp-ui-sideline-show-diagnostics t)
   (setq lsp-ui-sideline-show-hover t)
   (setq lsp-ui-sideline-show-code-actions t)
-  (setq lsp-ui-doc-enable t))
+  (setq lsp-ui-doc-enable t)
+  (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+  (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references))
 
-					;(use-package lsp-ivy
-					;  :hook (lsp-mode . lsp-ivy-workspace-symbol))
+;;(use-package lsp-ivy
+;;  :hook (lsp-mode . lsp-ivy-workspace-symbol))
 
 (use-package lsp-treemacs
-  ;:config (lsp-treemacs-sync-mode 1)
+                                        ;:config (lsp-treemacs-sync-mode 1)
   :bind
   ("C-c l e" . lsp-treemacs-errors-list)
   ("C-c l s" . lsp-treemacs-symbols)
