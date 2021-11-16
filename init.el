@@ -4,7 +4,6 @@
      (normal-top-level-add-subdirs-to-load-path)))
 
 (setq max-lisp-eval-depth 10000)
-;(add-to-load-path "~/.emacs.d/mia/")
 
 (require 'package)
 (setq package-archives '(("gnu"   . "http://elpa.emacs-china.org/gnu/")
@@ -16,7 +15,7 @@
                          ("org" . "http://mirrors.ustc.edu.cn/elpa/org/")))
 
 (package-initialize)
-					;(package-refresh-contents)
+(package-refresh-contents)
 
 (require 'exec-path-from-shell)
 (exec-path-from-shell-initialize)
@@ -43,10 +42,20 @@
 (use-package org
   :mode ("\\.org\\'" . org-mode)
   :config
-  (setq org-confirm-babel-evaluate nil))
+  (setq org-src-fontify-natively t)
+  (setq org-confirm-babel-evaluate nil)
+  (setq org-latex-listings 'minted
+        org-latex-packages-alist '(("" "minted"))
+        org-latex-listings-langs (quote ((emacs-lisp "Lisp") (lisp "Lisp") (clojure "Lisp") (c "C") (cc "C++") (fortran "fortran") (perl "Perl") (cperl "Perl") (python "Python") (ruby "Ruby") (html "HTML") (xml "XML") (tex "TeX") (latex "[LaTeX]TeX") (shell-script "bash") (gnuplot "Gnuplot") (ocaml "Caml") (caml "Caml") (sql "SQL") (sqlite "sql") (R-mode "R") (csharp "csharp")))))
+
+
+(setq org-latex-minted-options
+      '(("frame" "lines") ("linenos=true")))
+(setq org-latex-pdf-process '("xelatex -shell-escape -interaction nonstopmode %f"
+                              "xelatex -shell-escape  -interaction nonstopmode %f"))
 
 (use-package org-bullets
-    :hook (org-mode . org-bullets-mode))
+  :hook (org-mode . org-bullets-mode))
 
 (use-package yasnippet
   :config
@@ -61,7 +70,14 @@
   ;;(setq lsp-log-io t)
   :hook ((prog-mode . lsp-mode)
          (lsp-mode . lsp-lens-mode)
-         (erlang-mode . lsp)))
+         (erlang-mode . lsp)
+         (haskell-mode . lsp)
+         (csharp-mode . lsp)
+         (haskell-literate-mode-hook . lsp)))
+
+(use-package lsp-haskell
+  :config
+  (setq lsp-haskell-server-path "~/.ghcup/bin/haskell-language-server-wrapper"))
 
 (use-package aggressive-indent
   :config
@@ -284,11 +300,22 @@
   (beacon-mode 1))
 
 (defun prog-face ()
+  (face-remap-add-relative 'hl-line
+                           :background "forest green")
+
   (face-remap-add-relative 'font-lock-function-name-face
                            :height 160
-                           :underline t))
+                           :underline t)
 
-(add-hook 'prog-mode-hook #'prog-face)
+  (face-remap-add-relative 'lsp-face-highlight-textual
+                           :background "dark cyan"))
+
+(defun prog-hook ()
+  (prog-face)
+  (show-paren-mode)
+  )
+
+(add-hook 'prog-mode-hook #'prog-hook)
 (menu-bar-mode 0)
 (tool-bar-mode 0)
 (linum-mode)
@@ -311,8 +338,9 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    '("33ea268218b70aa106ba51a85fe976bfae9cf6931b18ceaf57159c558bbcd1e6" "a37d20710ab581792b7c9f8a075fcbb775d4ffa6c8bce9137c84951b1b453016" "c8e076f0e2df414c02fdb46b09b735628e73c73f72f9d78392edf99de7d86977" "d2e0c53dbc47b35815315fae5f352afd2c56fa8e69752090990563200daae434" "c9ddf33b383e74dac7690255dd2c3dfa1961a8e8a1d20e401c6572febef61045" "bf798e9e8ff00d4bf2512597f36e5a135ce48e477ce88a0764cfb5d8104e8163" "36ca8f60565af20ef4f30783aa16a26d96c02df7b4e54e9900a5138fb33808da" "e6df46d5085fde0ad56a46ef69ebb388193080cc9819e2d6024c9c6e27388ba9" "549ccbd11c125a4e671a1e8d3609063a91228e918ffb269e57bd2cd2c0a6f1c6" default))
+ '(ispell-dictionary nil)
  '(package-selected-packages
-   '(anti-zenburn-theme hc-zenburn-theme sly-quicklisp beacon telephone-line vterm multiple-cursors markdown-preview-mode undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui lsp-mode helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent)))
+   '(fzf ztree omnisharp exec-path-from-shell lsp-haskell anti-zenburn-theme hc-zenburn-theme sly-quicklisp beacon telephone-line vterm multiple-cursors undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
