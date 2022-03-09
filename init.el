@@ -14,15 +14,62 @@
                          ("melpa" . "http://mirrors.ustc.edu.cn/elpa/melpa/")
                          ("org" . "http://mirrors.ustc.edu.cn/elpa/org/")))
 
-(package-initialize)
-(package-refresh-contents)
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
 
-(require 'exec-path-from-shell)
-(exec-path-from-shell-initialize)
+(package-initialize)
+
+(when (eq system-type "darwin")
+  (require 'exec-path-from-shell)
+  (exec-path-from-shell-initialize))
 
 (require 'use-package)
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
+
+(defun ensure-package-installed (&rest packages)
+  (mapcar
+   (lambda (package)
+     (unless (package-installed-p package)
+       (package-install package)))
+   packages))
+
+(ensure-package-installed
+ 'auto-package-update
+ 'dashboard
+ 'ivy
+ 'company
+ 'org
+ 'org-bullets
+ 'yasnippet
+ 'yasnippet-snippets
+ 'projectile
+ 'treemacs
+ 'treemacs-projectile
+ 'treemacs-magit
+ 'lsp-mode
+ 'lsp-ui
+ 'lsp-treemacs
+ 'lsp-haskell
+ 'aggressive-indent
+ 'flycheck
+ 'move-text
+ 'visual-regexp
+ 'goto-line-preview
+ 'avy
+ 'centaur-tabs
+ 'all-the-icons
+ 'which-key
+ 'rainbow-delimiters
+ 'plantuml-mode
+ 'org-static-blog
+ 'telephone-line
+ 'switch-window
+ 'beacon
+ 'zenburn-theme
+ 'sly
+ )
 
 (use-package auto-package-update
   :config
@@ -255,9 +302,9 @@
   :config
   (setq org-static-blog-publish-title "Cogito, ergo sum")
   (setq org-static-blog-publish-url "https://lafirest.github.io/")
-  (setq org-static-blog-publish-directory "~/lernu/lafirest/docs/")
-  (setq org-static-blog-posts-directory "~/lernu/lafirest/posts/")
-  (setq org-static-blog-drafts-directory "~/lernu/lafirest/drafts/")
+  (setq org-static-blog-publish-directory "~/labori/lafirest.github.io/")
+  (setq org-static-blog-posts-directory "~/labori/lafirest.github.io/")
+  (setq org-static-blog-drafts-directory "~/labori/lafirest.github.io/")
   (setq org-static-blog-enable-tags t)
   (setq org-export-with-toc t)
   (setq org-export-with-section-numbers t)
