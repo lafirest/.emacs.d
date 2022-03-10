@@ -69,6 +69,11 @@
  'beacon
  'zenburn-theme
  'sly
+ 'erlang
+ 'htmlize
+ 'magit
+ 'pangu-spacing ;;; auto add space between Chinese and English characters
+ 'undo-tree
  )
 
 (use-package auto-package-update
@@ -267,10 +272,11 @@
 (use-package centaur-tabs
   :demand
   :config
-  (centaur-tabs-mode t)
+  (centaur-tabs-headline-match)
   (setq centaur-tabs-style "box")
   (setq centaur-tabs-set-icons t)
   (setq centaur-tabs-set-bar 'over)
+  (centaur-tabs-mode t)
   :bind
   ("C-x t p" . centaur-tabs-backward)
   ("C-x t n" . centaur-tabs-forward))
@@ -302,9 +308,9 @@
   :config
   (setq org-static-blog-publish-title "Cogito, ergo sum")
   (setq org-static-blog-publish-url "https://lafirest.github.io/")
-  (setq org-static-blog-publish-directory "~/labori/lafirest.github.io/")
-  (setq org-static-blog-posts-directory "~/labori/lafirest.github.io/")
-  (setq org-static-blog-drafts-directory "~/labori/lafirest.github.io/")
+  (setq org-static-blog-publish-directory "~/labori/lafirest.github.io/docs")
+  (setq org-static-blog-posts-directory "~/labori/lafirest.github.io/posts")
+  (setq org-static-blog-drafts-directory "~/labori/lafirest.github.io/drafts")
   (setq org-static-blog-enable-tags t)
   (setq org-export-with-toc t)
   (setq org-export-with-section-numbers t)
@@ -350,8 +356,16 @@
   (setq beacon-color "yellow")
   (setq beacon-size 80)
   (setq beacon-blink-when-point-moves-vertically 10)
-  (beacon-mode 1)
-  )
+  (beacon-mode 1))
+
+(use-package pangu-spacing
+  :config
+  (setq pangu-spacing-real-insert-separtor t)
+  :hook (org-mode . pangu-spacing-mode))
+
+(use-package undo-tree
+  :config
+  (setq undo-tree-visualizer-diff t))
 
 (defun prog-face ()
   (face-remap-add-relative 'hl-line
@@ -371,9 +385,10 @@
 (add-hook 'prog-mode-hook #'prog-hook)
 (menu-bar-mode 0)
 (tool-bar-mode 0)
-(linum-mode)
+(display-line-numbers-mode)
 (global-linum-mode)
 (global-hl-line-mode 1)
+(global-undo-tree-mode)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (setq create-lockfiles nil)
 (setq-default indent-tabs-mode nil)
@@ -389,11 +404,41 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector
+   ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCCC"])
+ '(company-quickhelp-color-background "#4F4F4F")
+ '(company-quickhelp-color-foreground "#DCDCCC")
  '(custom-safe-themes
-   '("33ea268218b70aa106ba51a85fe976bfae9cf6931b18ceaf57159c558bbcd1e6" "a37d20710ab581792b7c9f8a075fcbb775d4ffa6c8bce9137c84951b1b453016" "c8e076f0e2df414c02fdb46b09b735628e73c73f72f9d78392edf99de7d86977" "d2e0c53dbc47b35815315fae5f352afd2c56fa8e69752090990563200daae434" "c9ddf33b383e74dac7690255dd2c3dfa1961a8e8a1d20e401c6572febef61045" "bf798e9e8ff00d4bf2512597f36e5a135ce48e477ce88a0764cfb5d8104e8163" "36ca8f60565af20ef4f30783aa16a26d96c02df7b4e54e9900a5138fb33808da" "e6df46d5085fde0ad56a46ef69ebb388193080cc9819e2d6024c9c6e27388ba9" "549ccbd11c125a4e671a1e8d3609063a91228e918ffb269e57bd2cd2c0a6f1c6" default))
+   '("b77a00d5be78f21e46c80ce450e5821bdc4368abf4ffe2b77c5a66de1b648f10" "79586dc4eb374231af28bbc36ba0880ed8e270249b07f814b0e6555bdcb71fab" "33ea268218b70aa106ba51a85fe976bfae9cf6931b18ceaf57159c558bbcd1e6" "a37d20710ab581792b7c9f8a075fcbb775d4ffa6c8bce9137c84951b1b453016" "c8e076f0e2df414c02fdb46b09b735628e73c73f72f9d78392edf99de7d86977" "d2e0c53dbc47b35815315fae5f352afd2c56fa8e69752090990563200daae434" "c9ddf33b383e74dac7690255dd2c3dfa1961a8e8a1d20e401c6572febef61045" "bf798e9e8ff00d4bf2512597f36e5a135ce48e477ce88a0764cfb5d8104e8163" "36ca8f60565af20ef4f30783aa16a26d96c02df7b4e54e9900a5138fb33808da" "e6df46d5085fde0ad56a46ef69ebb388193080cc9819e2d6024c9c6e27388ba9" "549ccbd11c125a4e671a1e8d3609063a91228e918ffb269e57bd2cd2c0a6f1c6" default))
+ '(fci-rule-color "#383838")
  '(ispell-dictionary nil)
+ '(line-number-mode nil)
+ '(nrepl-message-colors
+   '("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3"))
  '(package-selected-packages
-   '(org-modern htmlize bnf-mode ox-jira org-jira org-superstar dedicated fzf ztree omnisharp exec-path-from-shell lsp-haskell anti-zenburn-theme hc-zenburn-theme sly-quicklisp beacon telephone-line vterm multiple-cursors undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent)))
+   '(pangu-spacing magit-git org-modern htmlize bnf-mode ox-jira org-jira org-superstar dedicated fzf ztree omnisharp exec-path-from-shell lsp-haskell anti-zenburn-theme hc-zenburn-theme sly-quicklisp beacon telephone-line vterm multiple-cursors undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent))
+ '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
+ '(vc-annotate-background "#2B2B2B")
+ '(vc-annotate-color-map
+   '((20 . "#BC8383")
+     (40 . "#CC9393")
+     (60 . "#DFAF8F")
+     (80 . "#D0BF8F")
+     (100 . "#E0CF9F")
+     (120 . "#F0DFAF")
+     (140 . "#5F7F5F")
+     (160 . "#7F9F7F")
+     (180 . "#8FB28F")
+     (200 . "#9FC59F")
+     (220 . "#AFD8AF")
+     (240 . "#BFEBBF")
+     (260 . "#93E0E3")
+     (280 . "#6CA0A3")
+     (300 . "#7CB8BB")
+     (320 . "#8CD0D3")
+     (340 . "#94BFF3")
+     (360 . "#DC8CC3")))
+ '(vc-annotate-very-old-color "#DC8CC3"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
