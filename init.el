@@ -20,7 +20,7 @@
 
 (package-initialize)
 
-(when (eq system-type "darwin")
+(when (eq system-type 'darwin)
   (require 'exec-path-from-shell)
   (exec-path-from-shell-initialize))
 
