@@ -74,6 +74,7 @@
  'magit
  'pangu-spacing ;;; auto add space between Chinese and English characters
  'undo-tree
+ 'org-modern
  )
 
 (use-package auto-package-update
@@ -109,8 +110,13 @@
 (setq org-latex-pdf-process '("xelatex -shell-escape -interaction nonstopmode %f"
                               "xelatex -shell-escape  -interaction nonstopmode %f"))
 
-(use-package org-bullets
-  :hook (org-mode . org-bullets-mode))
+;;(use-package org-bullets
+;;:hook (org-mode . org-bullets-mode))
+
+(use-package org-modern
+  :hook (org-mode . org-modern-mode)
+  :config
+  (setq org-modern-hide-stars nil))
 
 (use-package yasnippet
   :config
