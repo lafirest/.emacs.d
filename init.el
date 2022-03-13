@@ -1,14 +1,11 @@
-;; 添加路径
-(defmacro add-to-load-path (path)
-  `(let ((default-directory ,path))
-     (normal-top-level-add-subdirs-to-load-path)))
+;; add path to load path
+;;(defmacro add-to-load-path (path)
+;;  `(let ((default-directory ,path))
+;;     (normal-top-level-add-subdirs-to-load-path)))
 
 (setq max-lisp-eval-depth 10000)
 
 (require 'package)
-(setq package-archives '(("gnu"   . "http://elpa.emacs-china.org/gnu/")
-                         ("melpa" . "http://elpa.emacs-china.org/melpa/")
-			 ("org" . "http://elpa.emacs-china.org/org/")))
 
 (setq package-archives '(("gnu" . "http://mirrors.ustc.edu.cn/elpa/gnu/")
                          ("melpa" . "http://mirrors.ustc.edu.cn/elpa/melpa/")
@@ -75,6 +72,9 @@
  'pangu-spacing ;;; auto add space between Chinese and English characters
  'undo-tree
  'org-modern
+ 'org-roam
+ 'org-roam-timestamps
+ 'org-roam-ui
  )
 
 (use-package auto-package-update
@@ -95,28 +95,73 @@
 (use-package org
   :mode ("\\.org\\'" . org-mode)
   :config
-  (setq org-use-sub-superscripts '{})
-  (setq org-export-with-sub-superscripts '{})
-  (setq org-src-fontify-natively t)
-  (setq org-confirm-babel-evaluate nil)
-  (setq org-image-actual-width nil)
-  (setq org-latex-listings 'minted
+  (setq org-use-sub-superscripts '{}
+        org-export-with-sub-superscripts '{}
+        org-src-fontify-natively t
+        org-confirm-babel-evaluate nil
+        org-image-actual-width nil
+        org-latex-listings 'minted
         org-latex-packages-alist '(("" "minted"))
-        org-latex-listings-langs (quote ((emacs-lisp "Lisp") (lisp "Lisp") (clojure "Lisp") (c "C") (cc "C++") (fortran "fortran") (perl "Perl") (cperl "Perl") (python "Python") (ruby "Ruby") (html "HTML") (xml "XML") (tex "TeX") (latex "[LaTeX]TeX") (shell-script "bash") (gnuplot "Gnuplot") (ocaml "Caml") (caml "Caml") (sql "SQL") (sqlite "sql") (R-mode "R") (csharp "csharp")))))
+
+        org-log-into-drawer "LOGBOOK"
+        org-clock-in-switch-to-state "ACTIVE"
+        org-clock-out-when-done '("DONE" "CANCELED")
+
+        org-todo-keywords '((sequence "TODO(t!)" "ACTIVE(a!)" "Suspended(s@)"
+                                      "BLOCKED(b@)" "DONE(d!)" "CANCELED(c@)"))
+
+        org-todo-keyword-faces '(("TODO" . "red") ("ACTIVE" . "yellow") ("Suspended" . "peru")
+                                 ("BLOCKED" . "brown") ("DONE" . "green") ("CANCELED" . "cyan"))
 
 
-(setq org-latex-minted-options
-      '(("frame" "lines") ("linenos=true")))
-(setq org-latex-pdf-process '("xelatex -shell-escape -interaction nonstopmode %f"
-                              "xelatex -shell-escape  -interaction nonstopmode %f"))
+        org-latex-listings-langs (quote ((emacs-lisp "Lisp") (lisp "Lisp") (clojure "Lisp") (c "C") (cc "C++") (fortran "fortran") (perl "Perl") (cperl "Perl") (python "Python") (ruby "Ruby") (html "HTML") (xml "XML") (tex "TeX") (latex "[LaTeX]TeX") (shell-script "bash") (gnuplot "Gnuplot") (ocaml "Caml") (caml "Caml") (sql "SQL") (sqlite "sql") (R-mode "R") (csharp "csharp")))
 
-;;(use-package org-bullets
-;;:hook (org-mode . org-bullets-mode))
+        org-latex-minted-options
+        '(("frame" "lines") ("linenos=true"))
+
+        org-latex-pdf-process '("xelatex -shell-escape -interaction nonstopmode %f"
+                                "xelatex -shell-escape  -interaction nonstopmode %f")))
+
+(use-package org-bullets
+  :hook (org-mode . org-bullets-mode))
 
 (use-package org-modern
   :hook (org-mode . org-modern-mode)
   :config
-  (setq org-modern-hide-stars nil))
+  (setq org-modern-hide-stars 'nil)
+  ;; TODO org-modern only support "TODO" and "DONE" keywords, this should be fork and fixup
+  (setq org-modern-todo 'nil))
+
+(use-package org-roam
+  :after org
+  :bind
+  ("C-c s i" . org-id-get-create)
+  ("C-c s n" . org-roam-node-insert)
+  ("C-c s a" . org-roam-alias-add)
+  :hook (org-mode . check-is-in-roam-dir)
+  :config
+  (setq org-roam-directory (file-truename "~/sciobazo"))
+  (setq org-roam-db-gc-threshold most-positive-fixnum)
+
+  (defun check-is-in-roam-dir ()
+    (when (and buffer-file-name
+               (string-match-p org-roam-directory buffer-file-name))
+      ;;(org-roam-db-autosync-mode)
+      (add-hook 'after-save-hook 'org-roam-db-sync)
+      (org-roam-timestams-mode)))  )
+
+(use-package org-roam-timestamps
+  :config
+  (setq org-roam-timestamps-parent-file t
+        org-roam-timestamps-remember-timestamps t
+        org-roam-timestamps-minimum-gap 60))
+
+(use-package org-roam-ui
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
 
 (use-package yasnippet
   :config
@@ -391,8 +436,7 @@
 (add-hook 'prog-mode-hook #'prog-hook)
 (menu-bar-mode 0)
 (tool-bar-mode 0)
-(display-line-numbers-mode)
-(global-linum-mode)
+(global-display-line-numbers-mode)
 (global-hl-line-mode 1)
 (global-undo-tree-mode)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -421,8 +465,9 @@
  '(line-number-mode nil)
  '(nrepl-message-colors
    '("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3"))
+ '(org-agenda-files nil)
  '(package-selected-packages
-   '(pangu-spacing magit-git org-modern htmlize bnf-mode ox-jira org-jira org-superstar dedicated fzf ztree omnisharp exec-path-from-shell lsp-haskell anti-zenburn-theme hc-zenburn-theme sly-quicklisp beacon telephone-line vterm multiple-cursors undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent))
+   '(org-roam-timestamps org-roam-ui pangu-spacing magit-git org-modern htmlize bnf-mode ox-jira org-jira org-superstar dedicated fzf ztree omnisharp exec-path-from-shell lsp-haskell anti-zenburn-theme hc-zenburn-theme sly-quicklisp beacon telephone-line vterm multiple-cursors undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent))
  '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-color-map
