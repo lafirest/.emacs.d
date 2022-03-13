@@ -136,19 +136,28 @@
   :after org
   :bind
   ("C-c s i" . org-id-get-create)
+  ("C-c s f" . org-roam-node-find)
   ("C-c s n" . org-roam-node-insert)
   ("C-c s a" . org-roam-alias-add)
+  ("C-c s A" . org-roam-alias-remove)
+  ("C-c s t" . org-roam-tag-add)
+  ("C-c s T" . org-roam-tag-remove)
+  ("C-c s r" . org-roam-ref-add)
+  ("C-c s T" . org-roam-ref-remove)
   :hook (org-mode . check-is-in-roam-dir)
   :config
   (setq org-roam-directory (file-truename "~/sciobazo"))
+  (setq org-roam-db-location
+        (expand-file-name "org-roam.db" org-roam-directory))
   (setq org-roam-db-gc-threshold most-positive-fixnum)
+  (setq org-roam-db-update-on-save t)
 
   (defun check-is-in-roam-dir ()
     (when (and buffer-file-name
                (string-match-p org-roam-directory buffer-file-name))
       ;;(org-roam-db-autosync-mode)
       (add-hook 'after-save-hook 'org-roam-db-sync)
-      (org-roam-timestams-mode)))  )
+      (org-roam-timestamps-mode))))
 
 (use-package org-roam-timestamps
   :config
