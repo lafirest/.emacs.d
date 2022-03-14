@@ -72,7 +72,7 @@
  'pangu-spacing ;;; auto add space between Chinese and English characters
  'undo-tree
  'org-modern
- 'org-roam
+ ;;'org-roam  ;;; this can't auto install, I don't know why
  'org-roam-timestamps
  'org-roam-ui
  )
@@ -143,7 +143,7 @@
   ("C-c s t" . org-roam-tag-add)
   ("C-c s T" . org-roam-tag-remove)
   ("C-c s r" . org-roam-ref-add)
-  ("C-c s T" . org-roam-ref-remove)
+  ("C-c s R" . org-roam-ref-remove)
   :hook (org-mode . check-is-in-roam-dir)
   :config
   (setq org-roam-directory (file-truename "~/sciobazo"))
@@ -157,7 +157,33 @@
                (string-match-p org-roam-directory buffer-file-name))
       ;;(org-roam-db-autosync-mode)
       (add-hook 'after-save-hook 'org-roam-db-sync)
-      (org-roam-timestamps-mode))))
+      (org-roam-timestamps-mode)))
+
+  ;;FXIME only work for exists node, the bset way is to fork org-roam and add a hook for insert link
+  (defun insert-node-and-tag ()
+    "insert node link and convert node name to tag to add"
+    (interactive)
+    (let ((start (point)))
+      (org-roam-node-insert)
+      (let ((ins (buffer-substring-no-properties start (line-end-position))))
+        (when (string-match "\\[\\[.*\\]\\[\\(.*\\)\\]\\]" ins)
+          (directly-tag-add
+           (list (replace-regexp-in-string " " "_" (downcase (match-string 1 ins)))))))))
+
+
+  (defun directly-tag-add (tags)
+    (let ((node (org-roam-node-at-point 'assert)))
+      (save-excursion
+        (goto-char (org-roam-node-point node))
+        (if (= (org-outline-level) 0)
+            (let ((current-tags (split-string (or (cadr (assoc "FILETAGS"
+                                                               (org-collect-keywords '("filetags"))))
+                                                  "")
+                                              ":" 'omit-nulls)))
+              (org-roam-set-keyword "filetags" (org-make-tag-string (seq-uniq (append tags current-tags)))))
+          (org-set-tags (seq-uniq (append tags (org-get-tags)))))
+        tags)))
+  )
 
 (use-package org-roam-timestamps
   :config
