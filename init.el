@@ -177,6 +177,13 @@
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))
 
+(use-package ox-hugo
+  :ensure t   ;Auto-install the package from Melpa
+  :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
+  :after ox
+  :config
+  (setq org-hugo-base-dir "~/labori/lafirest.github.io/"))
+
 (use-package yasnippet
   :config
   (yas-global-mode 1))
@@ -481,7 +488,7 @@
    '("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3"))
  '(org-agenda-files nil)
  '(package-selected-packages
-   '(use-package-always-ensure use-package-ensure quelpa-use-package quelpa org-roam-timestamps org-roam-ui pangu-spacing magit-git org-modern htmlize bnf-mode ox-jira org-jira org-superstar dedicated fzf ztree omnisharp exec-path-from-shell lsp-haskell anti-zenburn-theme hc-zenburn-theme sly-quicklisp beacon telephone-line vterm multiple-cursors undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent))
+   '(ox-hugo use-package-always-ensure use-package-ensure quelpa-use-package quelpa org-roam-timestamps org-roam-ui pangu-spacing magit-git org-modern htmlize bnf-mode ox-jira org-jira org-superstar dedicated fzf ztree omnisharp exec-path-from-shell lsp-haskell anti-zenburn-theme hc-zenburn-theme sly-quicklisp beacon telephone-line vterm multiple-cursors undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent))
  '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-color-map
