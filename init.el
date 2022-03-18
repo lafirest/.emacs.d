@@ -11,71 +11,36 @@
                          ("melpa" . "http://mirrors.ustc.edu.cn/elpa/melpa/")
                          ("org" . "http://mirrors.ustc.edu.cn/elpa/org/")))
 
+(package-initialize)
+
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
-
-(package-initialize)
-
-(when (eq system-type 'darwin)
-  (require 'exec-path-from-shell)
-  (exec-path-from-shell-initialize))
 
 (require 'use-package)
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
 
-(defun ensure-package-installed (&rest packages)
-  (mapcar
-   (lambda (package)
-     (unless (package-installed-p package)
-       (package-install package)))
-   packages))
+(unless (package-installed-p 'quelpa)
+  (with-temp-buffer
+    (url-insert-file-contents "https://github.com/quelpa/quelpa/raw/master/quelpa.el")
+    (eval-buffer)
+    (quelpa-self-upgrade)))
 
-(ensure-package-installed
- 'auto-package-update
- 'dashboard
- 'ivy
- 'company
- 'org
- 'org-bullets
- 'yasnippet
- 'yasnippet-snippets
- 'projectile
- 'treemacs
- 'treemacs-projectile
- 'treemacs-magit
- 'lsp-mode
- 'lsp-ui
- 'lsp-treemacs
- 'lsp-haskell
- 'aggressive-indent
- 'flycheck
- 'move-text
- 'visual-regexp
- 'goto-line-preview
- 'avy
- 'centaur-tabs
- 'all-the-icons
- 'which-key
- 'rainbow-delimiters
- 'plantuml-mode
- 'org-static-blog
- 'telephone-line
- 'switch-window
- 'beacon
- 'zenburn-theme
- 'sly
- 'erlang
- 'htmlize
- 'magit
- 'pangu-spacing ;;; auto add space between Chinese and English characters
- 'undo-tree
- 'org-modern
- ;;'org-roam  ;;; this can't auto install, I don't know why
- 'org-roam-timestamps
- 'org-roam-ui
- )
+(setq quelpa-checkout-melpa-p nil
+      quelpa-update-melpa-p nil
+      quelpa-melpa-recipe-stores nil
+      quelpa-self-upgrade-p nil)
+
+(quelpa
+ '(quelpa-use-package
+   :fetcher git
+   :url "https://github.com/quelpa/quelpa-use-package.git"))
+(require 'quelpa-use-package)
+
+(when (eq system-type 'darwin)
+  (require 'exec-path-from-shell)
+  (exec-path-from-shell-initialize))
 
 (use-package auto-package-update
   :config
@@ -138,6 +103,10 @@
   (setq org-modern-todo 'nil))
 
 (use-package org-roam
+  :ensure nil
+  :quelpa (org-roam :fetcher github-ssh
+                    :repo "lafirest/org-roam"
+                    :files ("extensions/*"))
   :after org
   :bind
   ("C-c s i" . org-id-get-create)
@@ -149,6 +118,7 @@
   ("C-c s T" . org-roam-tag-remove)
   ("C-c s r" . org-roam-ref-add)
   ("C-c s R" . org-roam-ref-remove)
+  ("C-c s l" . insert-node-and-tag)
   :hook (org-mode . check-is-in-roam-dir)
   :config
   (setq org-roam-directory (file-truename "~/sciobazo"))
@@ -164,31 +134,40 @@
       (add-hook 'after-save-hook 'org-roam-db-sync)
       (org-roam-timestamps-mode)))
 
-  ;;FXIME only work for exists node, the bset way is to fork org-roam and add a hook for insert link
+  (setq toggle-auto-insert-tag nil)
+  (add-hook 'org-roam-post-node-insert-hook
+            (lambda (id description)
+              (when toggle-auto-insert-tag
+                (directly-tag-add
+                 (list (replace-regexp-in-string
+                        " "
+                        "_"
+                        (downcase description))))
+                (setq toggle-auto-insert-tag nil))))
+
   (defun insert-node-and-tag ()
     "insert node link and convert node name to tag to add"
     (interactive)
-    (let ((start (point)))
-      (org-roam-node-insert)
-      (let ((ins (buffer-substring-no-properties start (line-end-position))))
-        (when (string-match "\\[\\[.*\\]\\[\\(.*\\)\\]\\]" ins)
-          (directly-tag-add
-           (list (replace-regexp-in-string " " "_" (downcase (match-string 1 ins)))))))))
-
+    (setq toggle-auto-insert-tag t)
+    (org-roam-node-insert))
 
   (defun directly-tag-add (tags)
+    "copy from org-mode, add tags to node"
     (let ((node (org-roam-node-at-point 'assert)))
       (save-excursion
         (goto-char (org-roam-node-point node))
         (if (= (org-outline-level) 0)
-            (let ((current-tags (split-string (or (cadr (assoc "FILETAGS"
-                                                               (org-collect-keywords '("filetags"))))
-                                                  "")
-                                              ":" 'omit-nulls)))
-              (org-roam-set-keyword "filetags" (org-make-tag-string (seq-uniq (append tags current-tags)))))
-          (org-set-tags (seq-uniq (append tags (org-get-tags)))))
-        tags)))
-  )
+            (let ((current-tags (split-string
+                                 (or
+                                  (cadr (assoc
+                                         "FILETAGS"
+                                         (org-collect-keywords '("filetags"))))
+                                  "")
+                                 ":" 'omit-nulls)))
+              (org-roam-set-keyword
+               "filetags"
+               (org-make-tag-string (seq-uniq (append tags current-tags)))))
+          (org-set-tags (seq-uniq (append tags (org-get-tags)))))))))
 
 (use-package org-roam-timestamps
   :config
@@ -202,6 +181,13 @@
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))
+
+(use-package ox-hugo
+  :ensure t   ;Auto-install the package from Melpa
+  :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
+  :after ox
+  :config
+  (setq org-hugo-base-dir "~/labori/lafirest.github.io/"))
 
 (use-package yasnippet
   :config
@@ -509,7 +495,7 @@
    '("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3"))
  '(org-agenda-files nil)
  '(package-selected-packages
-   '(company-tabnine use-package-always-ensure use-package-ensure quelpa-use-package quelpa org-roam-timestamps org-roam-ui pangu-spacing magit-git org-modern htmlize bnf-mode ox-jira org-jira org-superstar dedicated fzf ztree omnisharp exec-path-from-shell lsp-haskell anti-zenburn-theme hc-zenburn-theme sly-quicklisp beacon telephone-line vterm multiple-cursors undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent))
+   '(ox-hugo use-package-always-ensure use-package-ensure quelpa-use-package quelpa org-roam-timestamps org-roam-ui pangu-spacing magit-git org-modern htmlize bnf-mode ox-jira org-jira org-superstar dedicated fzf ztree omnisharp exec-path-from-shell lsp-haskell anti-zenburn-theme hc-zenburn-theme sly-quicklisp beacon telephone-line vterm multiple-cursors undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent))
  '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-color-map
