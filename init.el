@@ -38,9 +38,11 @@
    :url "https://github.com/quelpa/quelpa-use-package.git"))
 (require 'quelpa-use-package)
 
-(when (eq system-type 'darwin)
-  (require 'exec-path-from-shell)
-  (exec-path-from-shell-initialize))
+(use-package exec-path-from-shell
+  :init
+  (exec-path-from-shell-initialize)
+  ;; I don't know why this env can't be load auto
+  (setenv "DOTNET_ROOT" "/opt/dotnet-sdk-bin-6.0"))
 
 (use-package auto-package-update
   :config
@@ -91,11 +93,12 @@
   :hook (org-mode . org-bullets-mode))
 
 (use-package org-modern
+  :quelpa ((org-modern :fetcher file
+                       :path "~/git/org-modern")
+           :upgrade t)
   :hook (org-mode . org-modern-mode)
   :config
-  (setq org-modern-hide-stars 'nil)
-  ;; TODO org-modern only support "TODO" and "DONE" keywords, this should be fork and fixup
-  (setq org-modern-todo 'nil))
+  (setq org-modern-hide-stars 'nil))
 
 (use-package org-roam
   :ensure nil
@@ -194,13 +197,15 @@
   :config
   (setq lsp-erlang-server-path "~/.local/bin/erlang_ls")
   (setq lsp-lens-place-position 'above-line)
-  ;;(setq lsp-log-io t)
+  (setq lsp-log-io t)
   :hook ((prog-mode . lsp-mode)
          (lsp-mode . lsp-lens-mode)
          (erlang-mode . lsp)
          (haskell-mode . lsp)
-         (csharp-mode . lsp)
-         (haskell-literate-mode-hook . lsp)))
+         (csharp-mode . lsp) ;; csharp-ls
+         (haskell-literate-mode-hook . lsp)
+         ;; need install ccls (not emacs-ccls ?)
+         ((c-mode c++-mode) . (lambda () (require 'ccls) (lsp)))))
 
 (use-package lsp-haskell
   :config
@@ -209,6 +214,8 @@
 (use-package aggressive-indent
   :config
   (global-aggressive-indent-mode 1)
+  (add-to-list 'aggressive-indent-dont-indent-if
+               '(and (eq (char-before) ?\s) (looking-at-p "$")))
   :hook (lsp-mode . aggressive-indent-mode))
 
 (use-package lsp-ui
@@ -374,7 +381,8 @@
   (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
   (org-babel-do-load-languages 'org-babel-load-languages
                                '((plantuml . t)
-                                 (csharp . t))))
+                                 (csharp . t)
+                                 (lisp . t))))
 
 (use-package org-static-blog
   :config
@@ -482,13 +490,14 @@
  '(custom-safe-themes
    '("b77a00d5be78f21e46c80ce450e5821bdc4368abf4ffe2b77c5a66de1b648f10" "79586dc4eb374231af28bbc36ba0880ed8e270249b07f814b0e6555bdcb71fab" "33ea268218b70aa106ba51a85fe976bfae9cf6931b18ceaf57159c558bbcd1e6" "a37d20710ab581792b7c9f8a075fcbb775d4ffa6c8bce9137c84951b1b453016" "c8e076f0e2df414c02fdb46b09b735628e73c73f72f9d78392edf99de7d86977" "d2e0c53dbc47b35815315fae5f352afd2c56fa8e69752090990563200daae434" "c9ddf33b383e74dac7690255dd2c3dfa1961a8e8a1d20e401c6572febef61045" "bf798e9e8ff00d4bf2512597f36e5a135ce48e477ce88a0764cfb5d8104e8163" "36ca8f60565af20ef4f30783aa16a26d96c02df7b4e54e9900a5138fb33808da" "e6df46d5085fde0ad56a46ef69ebb388193080cc9819e2d6024c9c6e27388ba9" "549ccbd11c125a4e671a1e8d3609063a91228e918ffb269e57bd2cd2c0a6f1c6" default))
  '(fci-rule-color "#383838")
+ '(global-aggressive-indent-mode t)
  '(ispell-dictionary nil)
  '(line-number-mode nil)
  '(nrepl-message-colors
    '("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3"))
  '(org-agenda-files nil)
  '(package-selected-packages
-   '(ox-hugo use-package-always-ensure use-package-ensure quelpa-use-package quelpa org-roam-timestamps org-roam-ui pangu-spacing magit-git org-modern htmlize bnf-mode ox-jira org-jira org-superstar dedicated fzf ztree omnisharp exec-path-from-shell lsp-haskell anti-zenburn-theme hc-zenburn-theme sly-quicklisp beacon telephone-line vterm multiple-cursors undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent))
+   '(ccls ox-hugo use-package-always-ensure use-package-ensure quelpa-use-package quelpa org-roam-timestamps org-roam-ui pangu-spacing magit-git org-modern htmlize bnf-mode ox-jira org-jira org-superstar dedicated fzf ztree omnisharp exec-path-from-shell lsp-haskell anti-zenburn-theme hc-zenburn-theme sly-quicklisp beacon telephone-line vterm multiple-cursors undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent))
  '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-color-map
