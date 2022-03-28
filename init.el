@@ -197,7 +197,7 @@
   :config
   (setq lsp-erlang-server-path "~/.local/bin/erlang_ls")
   (setq lsp-lens-place-position 'above-line)
-  (setq lsp-log-io t)
+  ;;(setq lsp-log-io t)
   :hook ((prog-mode . lsp-mode)
          (lsp-mode . lsp-lens-mode)
          (erlang-mode . lsp)
