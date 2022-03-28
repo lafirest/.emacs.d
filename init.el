@@ -57,7 +57,12 @@
   :hook (after-init . ivy-mode))
 
 (use-package company
-  :hook (after-init . global-company-mode))
+  :hook
+  (after-init . global-company-mode)
+  :config
+  (setq company-backends '((:separate company-capf
+                                      company-dabbrev-code
+                                      company-yasnippet))))
 
 (use-package org
   :mode ("\\.org\\'" . org-mode)
@@ -197,6 +202,8 @@
   :config
   (setq lsp-erlang-server-path "~/.local/bin/erlang_ls")
   (setq lsp-lens-place-position 'above-line)
+  (setq lsp-completion-provider :none)
+
   ;;(setq lsp-log-io t)
   :hook ((prog-mode . lsp-mode)
          (lsp-mode . lsp-lens-mode)
