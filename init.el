@@ -98,9 +98,12 @@
   :hook (org-mode . org-bullets-mode))
 
 (use-package org-modern
-  :quelpa ((org-modern :fetcher file
-                       :path "~/git/org-modern")
-           :upgrade t)
+  :quelpa (org-roam :fetcher github-ssh
+                    :repo "lafirest/org-roam"
+                    :files ("extensions/*"))
+  ;;:quelpa ((org-modern :fetcher file
+  ;;                     :path "~/git/org-modern")
+  ;;         :upgrade t)
   :hook (org-mode . org-modern-mode)
   :config
   (setq org-modern-hide-stars 'nil))
@@ -228,10 +231,18 @@
 (use-package lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
   :config
-  (setq lsp-ui-sideline-show-diagnostics t)
-  (setq lsp-ui-sideline-show-hover t)
-  (setq lsp-ui-sideline-show-code-actions t)
-  (setq lsp-ui-doc-enable t)
+  (setq lsp-ui-doc-enable t
+        lsp-ui-sideline-show-diagnostics t
+        lsp-ui-sideline-show-hover t
+        lsp-ui-sideline-show-code-actions t
+        lsp-ui-doc-show-with-mouse nil
+        lsp-ui-doc-show-with-cursor t
+        lsp-ui-doc-doc-header t
+        lsp-ui-doc-include-signature t
+        lsp-ui-doc-max-width 60
+        lsp-ui-doc-max-height 60
+        )
+
   (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
   (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references))
 
@@ -472,6 +483,7 @@
 (add-hook 'prog-mode-hook #'prog-hook)
 (menu-bar-mode 0)
 (tool-bar-mode 0)
+(scroll-bar-mode 0)
 (global-display-line-numbers-mode)
 (global-hl-line-mode 1)
 (global-undo-tree-mode)
