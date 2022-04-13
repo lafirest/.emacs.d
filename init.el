@@ -7,9 +7,9 @@
 
 (require 'package)
 
-(setq package-archives '(("gnu" . "http://mirrors.ustc.edu.cn/elpa/gnu/")
-                         ("melpa" . "http://mirrors.ustc.edu.cn/elpa/melpa/")
-                         ("org" . "http://mirrors.ustc.edu.cn/elpa/org/")))
+         (setq package-archives '(("gnu" . "http://mirrors.ustc.edu.cn/elpa/gnu/")
+                                  ("melpa" . "http://mirrors.ustc.edu.cn/elpa/melpa/")
+                                  ("org" . "http://mirrors.ustc.edu.cn/elpa/org/")))
 
 (package-initialize)
 
@@ -366,17 +366,17 @@
   :after (treemacs magit)
   :ensure t)
 
-(use-package centaur-tabs
-  :demand
-  :config
-  (centaur-tabs-headline-match)
-  (setq centaur-tabs-style "box")
-  (setq centaur-tabs-set-icons t)
-  (setq centaur-tabs-set-bar 'over)
-  (centaur-tabs-mode t)
-  :bind
-  ("C-x t p" . centaur-tabs-backward)
-  ("C-x t n" . centaur-tabs-forward))
+;; (use-package centaur-tabs
+;;   :demand
+;;   :config
+;;   (centaur-tabs-headline-match)
+;;   (setq centaur-tabs-style "box")
+;;   (setq centaur-tabs-set-icons t)
+;;   (setq centaur-tabs-set-bar 'over)
+;;   (centaur-tabs-mode t)
+;;   :bind
+;;   ("C-x t p" . centaur-tabs-backward)
+;;   ("C-x t n" . centaur-tabs-forward))
 
 (use-package all-the-icons)
 
@@ -425,11 +425,16 @@
 <link href= \"static/style.css\" rel=\"stylesheet\" type=\"text/css\" />
 <link rel=\"icon\" href=\"static/favicon.ico\">"))
 
-(use-package telephone-line
-  :config
-  (setq telephone-line-height 24
-        telephone-line-evil-use-short-tag t)
-  (telephone-line-mode 1))
+;; (use-package telephone-line
+;;   :config
+;;   (setq telephone-line-height 24
+;;         telephone-line-evil-use-short-tag t)
+;;   (telephone-line-mode 1))
+
+(use-package awesome-tray
+  :quelpa (awesome-tray :fetcher github-ssh
+                        :repo "manateelazycat/awesome-tray")
+  :ensure nil)
 
 (use-package switch-window
   :config
@@ -463,7 +468,8 @@
 
 (use-package undo-tree
   :config
-  (setq undo-tree-visualizer-diff t))
+  (setq undo-tree-visualizer-diff t)
+  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo"))))
 
 (defun prog-face ()
   (face-remap-add-relative 'hl-line
@@ -480,7 +486,22 @@
   (prog-face)
   (show-paren-mode))
 
-(add-hook 'prog-mode-hook #'prog-hook)
+(defvar erlang-fmt-toogle-val t)
+
+(defun erlang-fmt-toogle ()
+  (interactive)
+  (setq erlang-fmt-toogle-val (not erlang-fmt-toogle-val))
+  (print erlang-fmt-toogle-val))
+
+(defun on-erlang-hook ()
+  (global-aggressive-indent-mode 0)
+  (add-hook 'after-save-hook (lambda ()
+                               (when erlang-fmt-toogle-val
+                                 (shell-command (concat "erlfmt -w " (buffer-file-name)))
+                                 (revert-buffer nil t)))))
+
+(add-hook 'prog-mode-hook 'prog-hook)
+(add-hook 'erlang-mode-hook 'on-erlang-hook)
 (menu-bar-mode 0)
 (tool-bar-mode 0)
 (scroll-bar-mode 0)
@@ -494,6 +515,8 @@
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 (setq auto-save-file-name-transforms
       '((".*" "~/.emacs.d/autosaves/\\1" t)))
+(awesome-tray-mode)
+(awesome-tray-enable)
 
 (load-theme 'zenburn t)
 
@@ -516,7 +539,7 @@
    '("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3"))
  '(org-agenda-files nil)
  '(package-selected-packages
-   '(ccls ox-hugo use-package-always-ensure use-package-ensure quelpa-use-package quelpa org-roam-timestamps org-roam-ui pangu-spacing magit-git org-modern htmlize bnf-mode ox-jira org-jira org-superstar dedicated fzf ztree omnisharp exec-path-from-shell lsp-haskell anti-zenburn-theme hc-zenburn-theme sly-quicklisp beacon telephone-line vterm multiple-cursors undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit smart-mode-line sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent))
+   '(awesome-tray ccls ox-hugo use-package-always-ensure use-package-ensure quelpa-use-package quelpa org-roam-timestamps org-roam-ui pangu-spacing magit-git org-modern htmlize bnf-mode ox-jira org-jira org-superstar dedicated fzf ztree omnisharp exec-path-from-shell lsp-haskell anti-zenburn-theme hc-zenburn-theme sly-quicklisp beacon vterm multiple-cursors undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent))
  '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-color-map
