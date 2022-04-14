@@ -503,11 +503,12 @@
 
 (defun set-fill-column-indicator ()
   (when (boundp 'display-fill-column-indicator)
+    (display-fill-column-indicator-mode)
     (setq-default indicate-buffer-boundaries 'left)
     (setq-default display-fill-column-indicator-column 100)
-    (setq-default display-fill-column-indicator-character ?\u2502)
+    (setq-default display-fill-column-indicator-character ?\u254e)
     (face-remap-add-relative 'fill-column-indicator
-                             :foreground-color "white")))
+                             :foreground "chocolate1")))
 
 (add-hook 'prog-mode-hook 'prog-hook)
 (add-hook 'erlang-mode-hook 'on-erlang-hook)
