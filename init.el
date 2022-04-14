@@ -431,10 +431,10 @@
 ;;         telephone-line-evil-use-short-tag t)
 ;;   (telephone-line-mode 1))
 
-(use-package awesome-tray
-  :quelpa (awesome-tray :fetcher github-ssh
-                        :repo "manateelazycat/awesome-tray")
-  :ensure nil)
+;; (use-package awesome-tray
+;;   :quelpa (awesome-tray :fetcher github-ssh
+;;                         :repo "manateelazycat/awesome-tray")
+;;   :ensure nil)
 
 (use-package switch-window
   :config
@@ -484,7 +484,8 @@
 
 (defun prog-hook ()
   (prog-face)
-  (show-paren-mode))
+  (show-paren-mode)
+  (set-fill-column-indicator))
 
 (defvar erlang-fmt-toogle-val t)
 
@@ -499,6 +500,14 @@
                                (when erlang-fmt-toogle-val
                                  (shell-command (concat "erlfmt -w " (buffer-file-name)))
                                  (revert-buffer nil t)))))
+
+(defun set-fill-column-indicator ()
+  (when (boundp 'display-fill-column-indicator)
+    (setq-default indicate-buffer-boundaries 'left)
+    (setq-default display-fill-column-indicator-column 100)
+    (setq-default display-fill-column-indicator-character ?\u2502)
+    (face-remap-add-relative 'fill-column-indicator
+                             :foreground-color "white")))
 
 (add-hook 'prog-mode-hook 'prog-hook)
 (add-hook 'erlang-mode-hook 'on-erlang-hook)
@@ -515,8 +524,6 @@
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 (setq auto-save-file-name-transforms
       '((".*" "~/.emacs.d/autosaves/\\1" t)))
-(awesome-tray-mode)
-(awesome-tray-enable)
 
 (load-theme 'zenburn t)
 
