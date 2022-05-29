@@ -250,7 +250,7 @@
 ;;  :hook (lsp-mode . lsp-ivy-workspace-symbol))
 
 (use-package lsp-treemacs
-                                        ;:config (lsp-treemacs-sync-mode 1)
+  ;;:config (lsp-treemacs-sync-mode 1)
   :bind
   ("C-c l e" . lsp-treemacs-errors-list)
   ("C-c l s" . lsp-treemacs-symbols)
@@ -471,6 +471,52 @@
   (setq undo-tree-visualizer-diff t)
   (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo"))))
 
+(use-package ligature
+  :load-path "/home/firest/github/ligature.el"
+  :config
+  ;; Enable the "www" ligature in every possible major mode
+  (ligature-set-ligatures 't '("www"))
+  ;; Enable traditional ligature support in eww-mode, if the
+  ;; `variable-pitch' face supports it
+  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+  ;; Enable all Cascadia Code ligatures in programming modes
+  (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+                                       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+                                       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+                                       "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+                                       "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+                                       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                                       "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+                                       "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+                                       ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+                                       "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+                                       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+                                       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+                                       "\\\\" "://"))
+  ;; Enables ligature checks globally in all buffers. You can also do it
+  ;; per mode with `ligature-mode'.
+  (global-ligature-mode t))
+
+(use-package rime
+  :config
+  (setq rime-posframe-properties
+        (list :background-color "#333333"
+              :foreground-color "#dcdccc"
+              :internal-border-width 10))
+
+  (setq  rime-show-candidate 'posframe)
+
+  (setq rime-disable-predicates
+        '(rime-predicate-after-alphabet-char-p
+          rime-predicate-prog-in-code-p
+          rime-predicate-in-code-string-p
+          rime-predicate-space-after-cc-p))
+
+  (define-key rime-active-mode-map (kbd "M-j") 'rime-inline-ascii)
+
+  :custom
+  (default-input-method "rime"))
+
 (defun prog-face ()
   (face-remap-add-relative 'hl-line
                            :background "forest green")
@@ -526,6 +572,13 @@
 (setq auto-save-file-name-transforms
       '((".*" "~/.emacs.d/autosaves/\\1" t)))
 
+;; Set default font
+(set-face-attribute 'default nil
+                    :family "Fira Code"
+                    :height 140
+                    :weight 'normal
+                    :width 'normal)
+
 (load-theme 'zenburn t)
 
 (custom-set-variables
@@ -570,11 +623,12 @@
      (340 . "#94BFF3")
      (360 . "#DC8CC3")))
  '(vc-annotate-very-old-color "#DC8CC3"))
+
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :background "#3F3F3F" :foreground "#DCDCCC" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight semi-bold :height 140 :width normal :foundry "nil" :family "JuliaMono")))))
-(put 'upcase-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
+ )
