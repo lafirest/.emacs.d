@@ -1,7 +1,4 @@
-auto-save-list
-elpa
-session.*
-projectile-bookmarks*
-.cache
-.last-package-update-day
-.lsp-session*
+*
+!init.el
+!scripts/
+!scripts/*
