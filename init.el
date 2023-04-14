@@ -1,66 +1,28 @@
 (add-to-list 'load-path "~/.emacs.d/scripts")
 (setq max-lisp-eval-depth 10000)
 
-(require 'package)
-
-(setq package-archives '(("gnu" . "http://mirrors.ustc.edu.cn/elpa/gnu/")
-                         ("melpa" . "http://mirrors.ustc.edu.cn/elpa/melpa/")
-                         ("org" . "http://mirrors.ustc.edu.cn/elpa/org/")))
-
-(package-initialize)
-
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-(require 'use-package)
-(require 'use-package-ensure)
-(setq use-package-always-ensure t)
-
-(unless (package-installed-p 'quelpa)
-  (with-temp-buffer
-    (url-insert-file-contents "https://github.com/quelpa/quelpa/raw/master/quelpa.el")
-    (eval-buffer)
-    (quelpa-self-upgrade)))
-
-(setq quelpa-checkout-melpa-p nil
-      quelpa-update-melpa-p nil
-      quelpa-melpa-recipe-stores nil
-      quelpa-self-upgrade-p nil)
-
-(quelpa
- '(quelpa-use-package
-   :fetcher git
-   :url "https://github.com/quelpa/quelpa-use-package.git"))
-(require 'quelpa-use-package)
+(require 'straight-helper)
+(require 'frame-helper)
+(require 'emacsclient-helper)
 
 (use-package exec-path-from-shell
+  :straight t
   :init
   (exec-path-from-shell-initialize)
   ;; I don't know why this env can't be load auto
   (setenv "DOTNET_ROOT" "/opt/dotnet-sdk-bin-6.0"))
 
-(use-package auto-package-update
+(use-package dashboard
+  :straight t
   :config
-  (setq auto-package-update-delete-old-versions t)
-  (setq auto-package-update-hide-results t)
-  (auto-package-update-maybe))
-
-(use-package frame-helper
-  :ensure nil
-  :load-path "./scripts")
-
-(use-package emacsclient-helper
-  :ensure nil
-  :load-path "./scripts")
-
-(require 'dashboard)
-(dashboard-setup-startup-hook)
+  (dashboard-setup-startup-hook))
 
 (use-package ivy
+  :straight t
   :hook (after-init . ivy-mode))
 
 (use-package company
+  :straight t
   :hook
   (after-init . global-company-mode)
   :config
@@ -69,6 +31,7 @@
                                       company-yasnippet))))
 
 (use-package org
+  :straight t
   :mode ("\\.org\\'" . org-mode)
   :config
   (setq org-use-sub-superscripts '{}
@@ -98,25 +61,14 @@
         org-latex-pdf-process '("xelatex -shell-escape -interaction nonstopmode %f"
                                 "xelatex -shell-escape  -interaction nonstopmode %f")))
 
-(use-package org-bullets
-  :hook (org-mode . org-bullets-mode))
-
 (use-package org-modern
-  :quelpa (org-roam :fetcher github-ssh
-                    :repo "lafirest/org-roam"
-                    :files ("extensions/*"))
-  ;;:quelpa ((org-modern :fetcher file
-  ;;                     :path "~/git/org-modern")
-  ;;         :upgrade t)
+  :straight t
   :hook (org-mode . org-modern-mode)
   :config
-  (setq org-modern-hide-stars 'nil))
+  (setq org-modern-hide-stars " "))
 
 (use-package org-roam
-  :ensure nil
-  :quelpa (org-roam :fetcher github-ssh
-                    :repo "lafirest/org-roam"
-                    :files ("extensions/*"))
+  :straight t
   :after org
   :bind
   ("C-c s i" . org-id-get-create)
@@ -180,12 +132,14 @@
           (org-set-tags (seq-uniq (append tags (org-get-tags)))))))))
 
 (use-package org-roam-timestamps
+  :straight t
   :config
   (setq org-roam-timestamps-parent-file t
         org-roam-timestamps-remember-timestamps t
         org-roam-timestamps-minimum-gap 60))
 
 (use-package org-roam-ui
+  :straight t
   :config
   (setq org-roam-ui-sync-theme t
         org-roam-ui-follow t
@@ -193,19 +147,21 @@
         org-roam-ui-open-on-start t))
 
 (use-package ox-hugo
-  :ensure t   ;Auto-install the package from Melpa
-  :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
+  :straight t
   :after ox
   :config
   (setq org-hugo-base-dir "~/labori/lafirest.github.io/"))
 
 (use-package yasnippet
+  :straight t
   :config
   (yas-global-mode 1))
 
-(use-package yasnippet-snippets)
+(use-package yasnippet-snippets
+  :straight t)
 
 (use-package lsp-mode
+  :straight t
   :config
   (setq lsp-erlang-server-path "~/.local/bin/erlang_ls")
   (setq lsp-lens-place-position 'above-line)
@@ -222,17 +178,19 @@
          ((c-mode c++-mode) . (lambda () (require 'ccls) (lsp)))))
 
 (use-package lsp-haskell
+  :straight t
   :config
   (setq lsp-haskell-server-path "~/.ghcup/bin/haskell-language-server-wrapper"))
 
 (use-package aggressive-indent
+  :straight t
   :config
-  (global-aggressive-indent-mode 1)
   (add-to-list 'aggressive-indent-dont-indent-if
-               '(and (eq (char-before) ?\s) (looking-at-p "$")))
-  :hook (lsp-mode . aggressive-indent-mode))
+               '(and (eq (char-before) ?\s) (looking-at-p "$"))))
+;;  :hook (lsp-mode . aggressive-indent-mode))
 
 (use-package lsp-ui
+  :straight t
   :hook (lsp-mode . lsp-ui-mode)
   :config
   (setq lsp-ui-doc-enable t
@@ -250,10 +208,8 @@
   (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
   (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references))
 
-;;(use-package lsp-ivy
-;;  :hook (lsp-mode . lsp-ivy-workspace-symbol))
-
 (use-package lsp-treemacs
+  :straight t
   ;;:config (lsp-treemacs-sync-mode 1)
   :bind
   ("C-c l e" . lsp-treemacs-errors-list)
@@ -262,28 +218,34 @@
   ("C-c l i" . lsp-treemacs-implementations)
   ("C-c l h" . lsp-treemacs-type-hierarchy))
 
-(use-package flycheck)
+(use-package flycheck
+  :straight t)
 
 (use-package projectile
+  :straight t
   :init (projectile-mode +1)
   :bind
   ("C-c p" . projectile-command-map)
   :config (setq projectile-completion-system 'ivy))
 
 (use-package move-text
+  :straight t
   :config
   (move-text-default-bindings))
 
 (use-package visual-regexp
+  :straight t
   :bind
   (("C-c r" . vr/replace)
    ("C-c q" . vr/query-replace)))
 
 (use-package goto-line-preview
+  :straight t
   :bind
   ("M-g g" . goto-line-preview))
 
 (use-package avy
+  :straight t
   :bind
   (("C-:" . avy-goto-char)
    ("C-'" . avy-goto-char-2)
@@ -294,6 +256,7 @@
    ("M-g h" . avy-org-goto-heading-timer)))
 
 (use-package treemacs
+  :straight t
   :config
   (progn
     (setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
@@ -363,43 +326,36 @@
         ("C-x t M-t" . treemacs-find-tag)))
 
 (use-package treemacs-projectile
-  :after (treemacs projectile)
-  :ensure t)
+  :straight t
+  :after (treemacs projectile))
 
 (use-package treemacs-magit
-  :after (treemacs magit)
-  :ensure t)
+  :straight t
+  :after (treemacs magit))
 
-;; (use-package centaur-tabs
-;;   :demand
-;;   :config
-;;   (centaur-tabs-headline-match)
-;;   (setq centaur-tabs-style "box")
-;;   (setq centaur-tabs-set-icons t)
-;;   (setq centaur-tabs-set-bar 'over)
-;;   (centaur-tabs-mode t)
-;;   :bind
-;;   ("C-x t p" . centaur-tabs-backward)
-;;   ("C-x t n" . centaur-tabs-forward))
-
-(use-package all-the-icons)
+(use-package all-the-icons
+  :straight t)
 
 (use-package which-key
+  :straight t
   :config
   (progn
     (which-key-mode)
     (which-key-setup-side-window-bottom)))
 
 (use-package rainbow-delimiters
+  :straight t
   :hook (prog-mode . rainbow-delimiters-mode))
 
 (use-package emacs-everywhere
+  :straight t
   :custom
   (emacs-everywhere-init-hooks
    (cons 'emacsclient/emacs-everywhere-init
          (remove 'emacs-everywhere-set-frame-position emacs-everywhere-init-hooks))))
 
 (use-package plantuml-mode
+  :straight t
   :mode ("\\.plantuml\\'" . plantuml-mode)
   :config
   (setq plantuml-jar-path  "~/.local/lib/plantuml.jar")
@@ -413,6 +369,7 @@
                                  (lisp . t))))
 
 (use-package org-static-blog
+  :straight t
   :config
   (setq org-static-blog-publish-title "Cogito, ergo sum")
   (setq org-static-blog-publish-url "https://lafirest.github.io/")
@@ -435,18 +392,8 @@
 <link href= \"static/style.css\" rel=\"stylesheet\" type=\"text/css\" />
 <link rel=\"icon\" href=\"static/favicon.ico\">"))
 
-;; (use-package telephone-line
-;;   :config
-;;   (setq telephone-line-height 24
-;;         telephone-line-evil-use-short-tag t)
-;;   (telephone-line-mode 1))
-
-;; (use-package awesome-tray
-;;   :quelpa (awesome-tray :fetcher github-ssh
-;;                         :repo "manateelazycat/awesome-tray")
-;;   :ensure nil)
-
 (use-package switch-window
+  :straight t
   :config
   (global-set-key (kbd "C-x o") 'switch-window)
   (global-set-key (kbd "C-x 1") 'switch-window-then-maximize)
@@ -465,6 +412,7 @@
   (global-set-key (kbd "C-x 4 0") 'switch-window-then-kill-buffer))
 
 (use-package beacon
+  :straight t
   :config
   (setq beacon-color "yellow")
   (setq beacon-size 80)
@@ -472,16 +420,19 @@
   (beacon-mode 1))
 
 (use-package pangu-spacing
+  :straight t
   :config
   (setq pangu-spacing-real-insert-separtor t)
   :hook (org-mode . pangu-spacing-mode))
 
 (use-package undo-tree
+  :straight t
   :config
   (setq undo-tree-visualizer-diff t)
   (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo"))))
 
 (use-package ligature
+  :straight t
   :load-path "/home/firest/github/ligature.el"
   :config
   ;; Enable the "www" ligature in every possible major mode
@@ -507,9 +458,8 @@
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
 
-
 (use-package rime
-
+  :straight t
   :config
   (setq rime-posframe-properties
         (list :background-color "#333333"
@@ -539,6 +489,9 @@
 
   (face-remap-add-relative 'lsp-face-highlight-textual
                            :background "dark cyan"))
+
+(use-package multi-vterm
+  :straight t)
 
 (defun prog-hook ()
   (prog-face)
