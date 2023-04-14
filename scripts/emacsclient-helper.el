@@ -41,12 +41,15 @@
                  (when current-frame
                    (cl-destructuring-bind (x . y) (frame-position)
                      (setq left (if (< x 0) 0.5 -0.5))))
-                 (make-frame `((name . ,name)
-                               (height . 80)
-                               (width . 120)
-                               (user-position . t)
-                               (top . 0.5)
-                               (left . ,left)))))
+                 (setq current-frame
+                       (make-frame `((name . ,name)
+                                     (height . 80)
+                                     (width . 120)
+                                     (user-position . t)
+                                     (top . 0.5)
+                                     (left . ,left))))
+                 (select-frame-set-input-focus current-frame)
+                 current-frame))
              (bind-frame (name)
                "create a new frame with a new vterm"
                (with-selected-frame (create-frame name)
