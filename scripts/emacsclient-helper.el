@@ -54,14 +54,28 @@
                "create a new frame with a new vterm"
                (with-selected-frame (create-frame name)
                  (multi-vterm name)))
+             (show-frame (frame)
+               "make the frame to be visible and be the focus"
+               (make-frame-visible frame)
+               (select-frame-set-input-focus frame))
+             (hide-frame (frame)
+               "hide the frame and focus on the next if it exists"
+               (make-frame-invisible frame)
+               (when-let ((next (car (visible-frame-list))))
+                 (select-frame-set-input-focus next)))
+             (may-hide-frame (frame)
+               "hide the frame if it is focused, otherwise refocus it"
+               (if (eq frame (selected-frame))
+                   (hide-frame frame)
+                 (select-frame-set-input-focus frame)))
              (toggle-frame (buffer)
                "if frame is exists, toggle the frame, or create a new frame and switch to the vterm buffer "
                (let* ((name (buffer-name buffer))
                       (frame (emacsclient/find-frame-by-name name)))
                  (if (frame-live-p frame)
                      (if (frame-visible-p frame)
-                         (make-frame-invisible frame)
-                       (make-frame-visible frame))
+                         (may-hide-frame frame)
+                       (show-frame frame))
                    (progn
                      (setq frame (create-frame name))
                      (select-frame frame)
