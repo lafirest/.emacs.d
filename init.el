@@ -349,10 +349,13 @@
 
 (use-package emacs-everywhere
   :straight t
-  :custom
-  (emacs-everywhere-init-hooks
-   (cons 'emacsclient/emacs-everywhere-init
-         (remove 'emacs-everywhere-set-frame-position emacs-everywhere-init-hooks))))
+  :hook
+  (after-init . (lambda ()
+                  (setq emacs-everywhere-init-hooks
+                        (cons 'emacsclient/emacs-everywhere-init
+                              (remove
+                               'emacs-everywhere-set-frame-position
+                               emacs-everywhere-init-hooks))))))
 
 (use-package plantuml-mode
   :straight t
