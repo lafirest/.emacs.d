@@ -33,6 +33,8 @@
 (use-package org
   :straight t
   :mode ("\\.org\\'" . org-mode)
+  :bind
+  ("C-c c" . (lambda () (interactive) (org-capture nil)))
   :config
   (setq org-use-sub-superscripts '{}
         org-export-with-sub-superscripts '{}
@@ -53,13 +55,35 @@
                                  ("BLOCKED" . "brown") ("DONE" . "green") ("CANCELED" . "cyan"))
 
 
-        org-latex-listings-langs (quote ((emacs-lisp "Lisp") (lisp "Lisp") (clojure "Lisp") (c "C") (cc "C++") (fortran "fortran") (perl "Perl") (cperl "Perl") (python "Python") (ruby "Ruby") (html "HTML") (xml "XML") (tex "TeX") (latex "[LaTeX]TeX") (shell-script "bash") (gnuplot "Gnuplot") (ocaml "Caml") (caml "Caml") (sql "SQL") (sqlite "sql") (R-mode "R") (csharp "csharp")))
+        org-latex-listings-langs (quote ((emacs-lisp "Lisp")
+                                         (lisp "Lisp")
+                                         (clojure "Lisp")
+                                         (c "C")
+                                         (cc "C++")
+                                         (fortran "fortran")
+                                         (perl "Perl")
+                                         (cperl "Perl")
+                                         (python "Python")
+                                         (ruby "Ruby")
+                                         (html "HTML")
+                                         (xml "XML")
+                                         (tex "TeX")
+                                         (latex "[LaTeX]TeX")
+                                         (shell-script "bash")
+                                         (gnuplot "Gnuplot") (ocaml "Caml") (caml "Caml") (sql "SQL") (sqlite "sql") (R-mode "R") (csharp "csharp")))
 
         org-latex-minted-options
         '(("frame" "lines") ("linenos=true"))
 
         org-latex-pdf-process '("xelatex -shell-escape -interaction nonstopmode %f"
-                                "xelatex -shell-escape  -interaction nonstopmode %f")))
+                                "xelatex -shell-escape  -interaction nonstopmode %f")
+        org-capture-templates
+        '(("t" "Todo" entry (file+headline "~/.emacs.d/org/todo.org" "Tasks")
+           "* TODO %?\n %U\n")
+          ("d" "Todo for Today" entry (file+datetree "~/.emacs.d/org/todo_for_day.org")
+           "* TODO %?\n %U\n")
+          ("n" "Thought or Note" entry (file+headline "~/.emacs.d/org/thought.org" "Thought")
+           "* Thought %?\n %U\n"))))
 
 (use-package org-modern
   :straight t
