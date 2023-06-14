@@ -420,6 +420,11 @@
 ;;   :custom
 ;;   (default-input-method "rime"))
 
+(use-package zenburn-theme
+  :straight t
+  :config
+  (load-theme 'zenburn t))
+
 (defun prog-face ()
   (face-remap-add-relative 'hl-line
                            :background "forest green")
@@ -484,5 +489,3 @@
                     :height 140
                     :weight 'normal
                     :width 'normal)
-
-(load-theme 'zenburn t)
