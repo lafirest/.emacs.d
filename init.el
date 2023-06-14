@@ -31,7 +31,7 @@
                                       company-yasnippet))))
 
 (use-package org
-  :straight t
+  :straight (:type built-in) ;; compile upstream repo sometime will fails
   :mode ("\\.org\\'" . org-mode)
   :bind
   ("C-c c" . (lambda () (interactive) (org-capture nil)))

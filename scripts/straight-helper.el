@@ -1,4 +1,4 @@
-;;; https://jeffkreeftmeijer.com/emacs-straight-use-package/
+1;;; https://jeffkreeftmeijer.com/emacs-straight-use-package/
 
 (setq straight-repository-branch "develop")
 
@@ -7,6 +7,8 @@
 
 ;;; Use use-package
 (setq straight-use-package-by-default t)
+
+(setq straight-vc-git-default-clone-depth 1)
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
