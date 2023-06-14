@@ -2,6 +2,3 @@
 !init.el
 !scripts/
 !scripts/*
-!rime/
-!rime/*
-!rime/*/*
