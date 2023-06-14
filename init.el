@@ -1,4 +1,4 @@
-(add-to-list 'load-path "~/.emacs.d/scripts")
+1(add-to-list 'load-path "~/.emacs.d/scripts")
 (setq max-lisp-eval-depth 10000)
 
 (require 'straight-helper)
@@ -91,85 +91,6 @@
   :config
   (setq org-modern-hide-stars " "))
 
-(use-package org-roam
-  :straight t
-  :after org
-  :bind
-  ("C-c s i" . org-id-get-create)
-  ("C-c s f" . org-roam-node-find)
-  ("C-c s n" . org-roam-node-insert)
-  ("C-c s a" . org-roam-alias-add)
-  ("C-c s A" . org-roam-alias-remove)
-  ("C-c s t" . org-roam-tag-add)
-  ("C-c s T" . org-roam-tag-remove)
-  ("C-c s r" . org-roam-ref-add)
-  ("C-c s R" . org-roam-ref-remove)
-  ("C-c s l" . insert-node-and-tag)
-  :hook (org-mode . check-is-in-roam-dir)
-  :config
-  (setq org-roam-directory (file-truename "~/sciobazo"))
-  (setq org-roam-db-location
-        (expand-file-name "org-roam.db" org-roam-directory))
-  (setq org-roam-db-gc-threshold most-positive-fixnum)
-  (setq org-roam-db-update-on-save t)
-
-  (defun check-is-in-roam-dir ()
-    (when (and buffer-file-name
-               (string-match-p org-roam-directory buffer-file-name))
-      ;;(org-roam-db-autosync-mode)
-      (add-hook 'after-save-hook 'org-roam-db-sync)
-      (org-roam-timestamps-mode)))
-
-  (setq toggle-auto-insert-tag nil)
-  (add-hook 'org-roam-post-node-insert-hook
-            (lambda (id description)
-              (when toggle-auto-insert-tag
-                (directly-tag-add
-                 (list (replace-regexp-in-string
-                        " "
-                        "_"
-                        (downcase description))))
-                (setq toggle-auto-insert-tag nil))))
-
-  (defun insert-node-and-tag ()
-    "insert node link and convert node name to tag to add"
-    (interactive)
-    (setq toggle-auto-insert-tag t)
-    (org-roam-node-insert))
-
-  (defun directly-tag-add (tags)
-    "copy from org-mode, add tags to node"
-    (let ((node (org-roam-node-at-point 'assert)))
-      (save-excursion
-        (goto-char (org-roam-node-point node))
-        (if (= (org-outline-level) 0)
-            (let ((current-tags (split-string
-                                 (or
-                                  (cadr (assoc
-                                         "FILETAGS"
-                                         (org-collect-keywords '("filetags"))))
-                                  "")
-                                 ":" 'omit-nulls)))
-              (org-roam-set-keyword
-               "filetags"
-               (org-make-tag-string (seq-uniq (append tags current-tags)))))
-          (org-set-tags (seq-uniq (append tags (org-get-tags)))))))))
-
-(use-package org-roam-timestamps
-  :straight t
-  :config
-  (setq org-roam-timestamps-parent-file t
-        org-roam-timestamps-remember-timestamps t
-        org-roam-timestamps-minimum-gap 60))
-
-(use-package org-roam-ui
-  :straight t
-  :config
-  (setq org-roam-ui-sync-theme t
-        org-roam-ui-follow t
-        org-roam-ui-update-on-save t
-        org-roam-ui-open-on-start t))
-
 (use-package ox-hugo
   :straight t
   :after ox
@@ -205,13 +126,6 @@
   :straight t
   :config
   (setq lsp-haskell-server-path "~/.ghcup/bin/haskell-language-server-wrapper"))
-
-(use-package aggressive-indent
-  :straight t
-  :config
-  (add-to-list 'aggressive-indent-dont-indent-if
-               '(and (eq (char-before) ?\s) (looking-at-p "$"))))
-;;  :hook (lsp-mode . aggressive-indent-mode))
 
 (use-package lsp-ui
   :straight t
@@ -485,26 +399,26 @@
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
 
-(use-package rime
-  :straight t
-  :config
-  (setq rime-posframe-properties
-        (list :background-color "#333333"
-              :foreground-color "#dcdccc"
-              :internal-border-width 10))
+;; (use-package rime
+;;   :straight t
+;;   :config
+;;   (setq rime-posframe-properties
+;;         (list :background-color "#333333"
+;;               :foreground-color "#dcdccc"
+;;               :internal-border-width 10))
 
-  (setq  rime-show-candidate 'posframe)
+;;   (setq  rime-show-candidate 'posframe)
 
-  (setq rime-disable-predicates
-        '(rime-predicate-after-alphabet-char-p
-          rime-predicate-prog-in-code-p
-          rime-predicate-in-code-string-p
-          rime-predicate-space-after-cc-p))
+;;   (setq rime-disable-predicates
+;;         '(rime-predicate-after-alphabet-char-p
+;;           rime-predicate-prog-in-code-p
+;;           rime-predicate-in-code-string-p
+;;           rime-predicate-space-after-cc-p))
 
-  (define-key rime-active-mode-map (kbd "M-j") 'rime-inline-ascii)
+;;   (define-key rime-active-mode-map (kbd "M-j") 'rime-inline-ascii)
 
-  :custom
-  (default-input-method "rime"))
+;;   :custom
+;;   (default-input-method "rime"))
 
 (defun prog-face ()
   (face-remap-add-relative 'hl-line
@@ -517,8 +431,8 @@
   (face-remap-add-relative 'lsp-face-highlight-textual
                            :background "dark cyan"))
 
-(use-package multi-vterm
-  :straight t)
+;;(use-package multi-vterm
+;;  :straight t)
 
 (defun prog-hook ()
   (prog-face)
@@ -572,55 +486,3 @@
                     :width 'normal)
 
 (load-theme 'zenburn t)
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector
-   ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCCC"])
- '(company-quickhelp-color-background "#4F4F4F")
- '(company-quickhelp-color-foreground "#DCDCCC")
- '(custom-safe-themes
-   '("b77a00d5be78f21e46c80ce450e5821bdc4368abf4ffe2b77c5a66de1b648f10" "79586dc4eb374231af28bbc36ba0880ed8e270249b07f814b0e6555bdcb71fab" "33ea268218b70aa106ba51a85fe976bfae9cf6931b18ceaf57159c558bbcd1e6" "a37d20710ab581792b7c9f8a075fcbb775d4ffa6c8bce9137c84951b1b453016" "c8e076f0e2df414c02fdb46b09b735628e73c73f72f9d78392edf99de7d86977" "d2e0c53dbc47b35815315fae5f352afd2c56fa8e69752090990563200daae434" "c9ddf33b383e74dac7690255dd2c3dfa1961a8e8a1d20e401c6572febef61045" "bf798e9e8ff00d4bf2512597f36e5a135ce48e477ce88a0764cfb5d8104e8163" "36ca8f60565af20ef4f30783aa16a26d96c02df7b4e54e9900a5138fb33808da" "e6df46d5085fde0ad56a46ef69ebb388193080cc9819e2d6024c9c6e27388ba9" "549ccbd11c125a4e671a1e8d3609063a91228e918ffb269e57bd2cd2c0a6f1c6" default))
- '(fci-rule-color "#383838")
- '(global-aggressive-indent-mode t)
- '(ispell-dictionary nil)
- '(line-number-mode nil)
- '(nrepl-message-colors
-   '("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3"))
- '(org-agenda-files nil)
- '(package-selected-packages
-   '(frame-helper emacsclient-helper move-frame-to-center awesome-tray ccls ox-hugo use-package-always-ensure use-package-ensure quelpa-use-package quelpa org-roam-timestamps org-roam-ui pangu-spacing magit-git org-modern htmlize bnf-mode ox-jira org-jira org-superstar dedicated fzf ztree omnisharp exec-path-from-shell lsp-haskell anti-zenburn-theme hc-zenburn-theme sly-quicklisp beacon vterm multiple-cursors undo-tree org-preview-html yaml-mode plantuml-mode rainbow-delimiters which-key solo-jazz-theme darktooth-theme ample-theme zenburn-theme dracula-theme erlang xwwp-follow-link-ivy flycheck csharp-mode lsp-ui helm-lsp yasnippet-snippets xr visual-regexp treemacs-projectile treemacs-magit sly orgtbl-show-header org-roam org-bullets move-text magit-todos lsp-treemacs lsp-ivy goto-line-preview focus dashboard company common-lisp-snippets centaur-tabs avy-flycheck auto-package-update all-the-icons aggressive-indent))
- '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
- '(vc-annotate-background "#2B2B2B")
- '(vc-annotate-color-map
-   '((20 . "#BC8383")
-     (40 . "#CC9393")
-     (60 . "#DFAF8F")
-     (80 . "#D0BF8F")
-     (100 . "#E0CF9F")
-     (120 . "#F0DFAF")
-     (140 . "#5F7F5F")
-     (160 . "#7F9F7F")
-     (180 . "#8FB28F")
-     (200 . "#9FC59F")
-     (220 . "#AFD8AF")
-     (240 . "#BFEBBF")
-     (260 . "#93E0E3")
-     (280 . "#6CA0A3")
-     (300 . "#7CB8BB")
-     (320 . "#8CD0D3")
-     (340 . "#94BFF3")
-     (360 . "#DC8CC3")))
- '(vc-annotate-very-old-color "#DC8CC3"))
-
-(put 'upcase-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )

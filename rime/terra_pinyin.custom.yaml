@@ -1,6 +1,0 @@
-patch:
-  switches:
-    - name: simplification
-      reset: 1
-  menu:
-    page_size: 6
