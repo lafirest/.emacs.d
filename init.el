@@ -1,4 +1,4 @@
-1(add-to-list 'load-path "~/.emacs.d/scripts")
+(add-to-list 'load-path "~/.emacs.d/scripts")
 (setq max-lisp-eval-depth 10000)
 
 (require 'straight-helper)
@@ -105,56 +105,55 @@
 (use-package yasnippet-snippets
   :straight t)
 
-(use-package lsp-mode
-  :straight t
-  :config
-  (setq lsp-erlang-server-path "~/.local/bin/erlang_ls")
-  (setq lsp-lens-place-position 'above-line)
-  (setq lsp-completion-provider :none)
+;; (use-package lsp-mode
+;;   :straight t
+;;   :config
+;;   (setq lsp-erlang-server-path "~/.local/bin/erlang_ls")
+;;   (setq lsp-lens-place-position 'above-line)
+;;   (setq lsp-completion-provider :none)
+;;   (setq lsp-log-io t))
+;;   :hook ((prog-mode . lsp-mode)
+;;          (lsp-mode . lsp-lens-mode)
+;;          (erlang-mode . lsp)
+;;          (haskell-mode . lsp)
+;;          (csharp-mode . lsp) csharp-ls
+;;          (haskell-literate-mode-hook . lsp)
+;;          need install ccls (not emacs-ccls ?)
+;;          ((c-mode c++-mode) . (lambda () (require 'ccls) (lsp)))))
 
-  ;;(setq lsp-log-io t)
-  :hook ((prog-mode . lsp-mode)
-         (lsp-mode . lsp-lens-mode)
-         (erlang-mode . lsp)
-         (haskell-mode . lsp)
-         (csharp-mode . lsp) ;; csharp-ls
-         (haskell-literate-mode-hook . lsp)
-         ;; need install ccls (not emacs-ccls ?)
-         ((c-mode c++-mode) . (lambda () (require 'ccls) (lsp)))))
+;; (use-package lsp-haskell
+;;   :straight t
+;;   :config
+;;   (setq lsp-haskell-server-path "~/.ghcup/bin/haskell-language-server-wrapper"))
 
-(use-package lsp-haskell
-  :straight t
-  :config
-  (setq lsp-haskell-server-path "~/.ghcup/bin/haskell-language-server-wrapper"))
+;; (use-package lsp-ui
+;;   :straight t
+;;   :hook (lsp-mode . lsp-ui-mode)
+;;   :config
+;;   (setq lsp-ui-doc-enable t
+;;         lsp-ui-sideline-show-diagnostics t
+;;         lsp-ui-sideline-show-hover t
+;;         lsp-ui-sideline-show-code-actions t
+;;         lsp-ui-doc-show-with-mouse nil
+;;         lsp-ui-doc-show-with-cursor t
+;;         lsp-ui-doc-doc-header t
+;;         lsp-ui-doc-include-signature t
+;;         lsp-ui-doc-max-width 60
+;;         lsp-ui-doc-max-height 60
+;;         )
 
-(use-package lsp-ui
-  :straight t
-  :hook (lsp-mode . lsp-ui-mode)
-  :config
-  (setq lsp-ui-doc-enable t
-        lsp-ui-sideline-show-diagnostics t
-        lsp-ui-sideline-show-hover t
-        lsp-ui-sideline-show-code-actions t
-        lsp-ui-doc-show-with-mouse nil
-        lsp-ui-doc-show-with-cursor t
-        lsp-ui-doc-doc-header t
-        lsp-ui-doc-include-signature t
-        lsp-ui-doc-max-width 60
-        lsp-ui-doc-max-height 60
-        )
+;;   (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+;;   (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references))
 
-  (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
-  (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references))
-
-(use-package lsp-treemacs
-  :straight t
-  ;;:config (lsp-treemacs-sync-mode 1)
-  :bind
-  ("C-c l e" . lsp-treemacs-errors-list)
-  ("C-c l s" . lsp-treemacs-symbols)
-  ("C-c l r" . lsp-treemacs-references)
-  ("C-c l i" . lsp-treemacs-implementations)
-  ("C-c l h" . lsp-treemacs-type-hierarchy))
+;; (use-package lsp-treemacs
+;;   :straight t
+;;   ;;:config (lsp-treemacs-sync-mode 1)
+;;   :bind
+;;   ("C-c l e" . lsp-treemacs-errors-list)
+;;   ("C-c l s" . lsp-treemacs-symbols)
+;;   ("C-c l r" . lsp-treemacs-references)
+;;   ("C-c l i" . lsp-treemacs-implementations)
+;;   ("C-c l h" . lsp-treemacs-type-hierarchy))
 
 (use-package flycheck
   :straight t)
@@ -420,10 +419,49 @@
 ;;   :custom
 ;;   (default-input-method "rime"))
 
-(use-package zenburn-theme
+(require 'tramp)
+(require 'tramp-container)
+
+(eval-after-load
+    'tramp
+    (lambda ()
+      ;; speed up
+      (setq-default tramp-default-method "scp")
+      (setq remote-file-name-inhibit-cache nil) ;; if need disable
+
+      ;; avoid to hang
+      (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
+
+      (setq tramp-shell-prompt-pattern
+            "\\(?:^\\|\r\\)[^]#$%>\n]*#?[]#$%>].* *\\(^[\\[[0-9;]*[a-zA-Z] *\\)*")
+      (setq vc-ignore-dir-regexp
+            (format "\\(%s\\)\\|\\(%s\\)"
+                    vc-ignore-dir-regexp
+                    tramp-file-name-regexp))
+
+      ;; using erlfmt with after-save-hook will slow down even hanging the tramp
+      ;; Debug
+      ;;(setq tramp-debug-buffer t)
+      ;;(setq tramp-verbose 10)
+      ))
+
+;; avoid tramp to hang
+(defun vc-off-if-remote ()
+  (if (file-remote-p (buffer-file-name))
+      (setq-local vc-handled-backends nil)))
+
+(defun open-container (benko namo)
+  (interactive "sBenko:\nsNamo:")
+  (find-file
+   (read-file-name
+    "Open Container file: "
+    (format "/docker:firest@%s:/home/firest/%s" benko namo))))
+
+(use-package eglot
   :straight t
   :config
-  (load-theme 'zenburn t))
+  (add-to-list 'eglot-server-programs
+               '(erlang-mode . ("erlang_ls"))))
 
 (defun prog-face ()
   (face-remap-add-relative 'hl-line
@@ -436,27 +474,11 @@
   (face-remap-add-relative 'lsp-face-highlight-textual
                            :background "dark cyan"))
 
-;;(use-package multi-vterm
-;;  :straight t)
-
 (defun prog-hook ()
   (prog-face)
   (show-paren-mode)
   (set-fill-column-indicator))
 
-(defvar erlang-fmt-toogle-val t)
-
-(defun erlang-fmt-toogle ()
-  (interactive)
-  (setq erlang-fmt-toogle-val (not erlang-fmt-toogle-val))
-  (print erlang-fmt-toogle-val))
-
-(defun on-erlang-hook ()
-  (global-aggressive-indent-mode 0)
-  (add-hook 'after-save-hook (lambda ()
-                               (when erlang-fmt-toogle-val
-                                 (shell-command (concat "erlfmt -w " (buffer-file-name)))
-                                 (revert-buffer nil t)))))
 
 (defun set-fill-column-indicator ()
   (when (boundp 'display-fill-column-indicator)
@@ -467,8 +489,11 @@
     (face-remap-add-relative 'fill-column-indicator
                              :foreground "chocolate1")))
 
+;; hooks
 (add-hook 'prog-mode-hook 'prog-hook)
-(add-hook 'erlang-mode-hook 'on-erlang-hook)
+(add-hook 'find-file-hook 'vc-off-if-remote)
+(add-hook 'erlang-mode-hook 'eglot-ensure)
+
 (menu-bar-mode 0)
 (tool-bar-mode 0)
 (scroll-bar-mode 0)
@@ -489,3 +514,8 @@
                     :height 140
                     :weight 'normal
                     :width 'normal)
+
+(use-package zenburn-theme
+  :straight t
+  :config
+  (load-theme 'zenburn t))
