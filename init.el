@@ -4,6 +4,8 @@
 (require 'straight-helper)
 (require 'frame-helper)
 (require 'emacsclient-helper)
+(require 'ctl-helper)
+(require 'erl-helper)
 
 (use-package exec-path-from-shell
   :straight t
@@ -419,43 +421,6 @@
 ;;   :custom
 ;;   (default-input-method "rime"))
 
-(require 'tramp)
-(require 'tramp-container)
-
-(eval-after-load
-    'tramp
-    (lambda ()
-      ;; speed up
-      (setq-default tramp-default-method "scp")
-      (setq remote-file-name-inhibit-cache nil) ;; if need disable
-
-      ;; avoid to hang
-      (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
-
-      (setq tramp-shell-prompt-pattern
-            "\\(?:^\\|\r\\)[^]#$%>\n]*#?[]#$%>].* *\\(^[\\[[0-9;]*[a-zA-Z] *\\)*")
-      (setq vc-ignore-dir-regexp
-            (format "\\(%s\\)\\|\\(%s\\)"
-                    vc-ignore-dir-regexp
-                    tramp-file-name-regexp))
-
-      ;; using erlfmt with after-save-hook will slow down even hanging the tramp
-      ;; Debug
-      ;;(setq tramp-debug-buffer t)
-      ;;(setq tramp-verbose 10)
-      ))
-
-;; avoid tramp to hang
-(defun vc-off-if-remote ()
-  (if (file-remote-p (buffer-file-name))
-      (setq-local vc-handled-backends nil)))
-
-(defun open-container (benko namo)
-  (interactive "sBenko:\nsNamo:")
-  (find-file
-   (read-file-name
-    "Open Container file: "
-    (format "/docker:firest@%s:/home/firest/%s" benko namo))))
 
 (use-package eglot
   :straight t
@@ -479,7 +444,6 @@
   (show-paren-mode)
   (set-fill-column-indicator))
 
-
 (defun set-fill-column-indicator ()
   (when (boundp 'display-fill-column-indicator)
     (display-fill-column-indicator-mode)
@@ -491,8 +455,6 @@
 
 ;; hooks
 (add-hook 'prog-mode-hook 'prog-hook)
-(add-hook 'find-file-hook 'vc-off-if-remote)
-(add-hook 'erlang-mode-hook 'eglot-ensure)
 
 (menu-bar-mode 0)
 (tool-bar-mode 0)

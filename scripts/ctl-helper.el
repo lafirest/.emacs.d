@@ -1,0 +1,79 @@
+(require 'tramp)
+(require 'tramp-container)
+
+(defconst ctl-cmd-port "59998")
+
+(eval-after-load
+    'tramp
+  (lambda ()
+    ;; speed up
+    (setq vc-ignore-dir-regexp
+          (format "\\(%s\\)\\|\\(%s\\)"
+                  vc-ignore-dir-regexp
+                  tramp-file-name-regexp))
+    ;; speed up the tramp-find-foreign-file-name-handler
+    (setq
+     tramp-foreign-file-name-handler-alist
+     (list (assoc 'identity tramp-foreign-file-name-handler-alist)))
+
+    (setq remote-file-name-inhibit-cache nil) ;; if need disable
+
+    ;; use socat to send file
+    (add-to-list 'tramp-connection-properties
+             (list (regexp-quote "/docker:")
+                   "copy-program" "docker-tramp-cp"))
+
+    ;; avoid to hang
+    (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
+
+    (setq tramp-shell-prompt-pattern
+          "\\(?:^\\|\r\\)[^]#$%>\n]*#?[]#$%>].* *\\(^[\\[[0-9;]*[a-zA-Z] *\\)*")
+
+    ;; bin path
+    (add-to-list 'tramp-remote-path "/home/firest/.local/bin")
+
+    ;; using erlfmt with after-save-hook will slow down even hanging the tramp
+    ;; Debug
+    (setq tramp-debug-buffer t)
+    (setq tramp-debug-to-file t)
+    (setq tramp-verbose 10)
+    ))
+
+;; avoid tramp to hang
+(defun ctl/vc-off-if-remote ()
+  (if (file-remote-p (buffer-file-name))
+      (setq-local vc-handled-backends nil)))
+
+(defun open-container (benko namo)
+  (interactive "sBenko:\nsNamo:")
+  (find-file
+   (read-file-name
+    "Open Container file: "
+    (format "/docker:firest@%s:/home/firest/%s" benko namo))))
+
+(defmacro with-container-cmd-channel (container &rest body)
+  `(let* ((channel-name (cl-gentemp))
+          (channel
+           (open-network-stream
+            (symbol-name channel-name)
+            nil
+            ,container
+            ctl-cmd-port)))
+     (cl-flet ((send (lambda (cmd)
+                       (process-send-string channel
+                                            (format "%s\n" cmd)))))
+       ,@body)
+     (delete-process channel)))
+
+(defmacro with-current-container (&rest body)
+  `(let ((buf (current-buffer)))
+     (when (and
+            (buffer-local-boundp 'benko buf)
+            (buffer-local-boundp 'namo buf))
+       (let ((home (file-name-concat "/home/firest" namo)))
+         (with-container-cmd-channel benko
+                                     ,@body)))))
+
+(add-hook 'find-file-hook 'ctl/vc-off-if-remote)
+
+(provide 'ctl-helper)
