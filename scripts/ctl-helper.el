@@ -18,13 +18,19 @@
 
     (setq remote-file-name-inhibit-cache nil) ;; if need disable
 
-    ;; use socat to send file
-    (add-to-list 'tramp-connection-properties
-             (list (regexp-quote "/docker:")
-                   "copy-program" "docker-tramp-cp"))
+    ;; use rsync to send file
+    (setq tramp-connection-properties
+          (append
+           tramp-connection-properties
+           (mapcar (lambda (kv)
+                     (cons (regexp-quote "/docker:") kv))
+                   '(("copy-program" "docker-tramp-cp")
+                     ("keep-date" t)
+                     ("keep-tmpfile" t)
+                     ("copy-recursive" t)))))
 
     ;; avoid to hang
-    (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
+    (setenv "SHELL" "/bin/bash")
 
     (setq tramp-shell-prompt-pattern
           "\\(?:^\\|\r\\)[^]#$%>\n]*#?[]#$%>].* *\\(^[\\[[0-9;]*[a-zA-Z] *\\)*")

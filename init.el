@@ -421,12 +421,13 @@
 ;;   :custom
 ;;   (default-input-method "rime"))
 
+(use-package erlang)
 
 (use-package eglot
   :straight t
   :config
   (add-to-list 'eglot-server-programs
-               '(erlang-mode . ("erlang_ls"))))
+               '(erlang-mode . ("bash" "-c"  "source /home/firest/.profile && erlang_ls"))))
 
 (defun prog-face ()
   (face-remap-add-relative 'hl-line
