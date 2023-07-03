@@ -24,10 +24,10 @@
            tramp-connection-properties
            (mapcar (lambda (kv)
                      (cons (regexp-quote "/docker:") kv))
-                   '(("copy-program" "docker-tramp-cp")
-                     ("keep-date" t)
-                     ("keep-tmpfile" t)
-                     ("copy-recursive" t)))))
+                   '(("copy-program" "docker-tramp-cp")))))
+                    ;; ("keep-date" t)
+                    ;; ("keep-tmpfile" t)
+                    ;;  ("copy-recursive" t)))))
 
     ;; avoid to hang
     (setenv "SHELL" "/bin/bash")
@@ -36,13 +36,13 @@
           "\\(?:^\\|\r\\)[^]#$%>\n]*#?[]#$%>].* *\\(^[\\[[0-9;]*[a-zA-Z] *\\)*")
 
     ;; bin path
-    (add-to-list 'tramp-remote-path "/home/firest/.local/bin")
+    (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
 
     ;; using erlfmt with after-save-hook will slow down even hanging the tramp
     ;; Debug
-    (setq tramp-debug-buffer t)
-    (setq tramp-debug-to-file t)
-    (setq tramp-verbose 10)
+    ;;(setq tramp-debug-buffer t)
+    ;;(setq tramp-debug-to-file t)
+    (setq tramp-verbose 0)
     ))
 
 ;; avoid tramp to hang

@@ -427,7 +427,7 @@
   :straight t
   :config
   (add-to-list 'eglot-server-programs
-               '(erlang-mode . ("bash" "-c"  "source /home/firest/.profile && erlang_ls"))))
+               '(erlang-mode . ("erlang_ls"))))
 
 (defun prog-face ()
   (face-remap-add-relative 'hl-line
