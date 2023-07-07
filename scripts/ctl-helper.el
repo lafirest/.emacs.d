@@ -50,12 +50,20 @@
   (if (file-remote-p (buffer-file-name))
       (setq-local vc-handled-backends nil)))
 
-(defun open-container (benko namo)
-  (interactive "sBenko:\nsNamo:")
-  (find-file
-   (read-file-name
-    "Open Container file: "
-    (format "/docker:firest@%s:/home/firest/%s" benko namo))))
+(defun open-container ()
+  (interactive)
+  (let* ((benko (completing-read
+                 "Elektu unu laborbenkon: "
+                 (split-string
+                  (shell-command-to-string "docker container ls --format '{{.Names}}'")
+                  "\n")))
+         (projekto (completing-read
+                    "Elektu unu projekto"
+                    (split-string
+                     (shell-command-to-string (format "docker exec %s ls ~" benko))
+                     "\n"))))
+    (find-file
+     (format "/docker:firest@%s:/home/firest/" benko))))
 
 (defmacro with-container-cmd-channel (container &rest body)
   `(let* ((channel-name (cl-gentemp))
