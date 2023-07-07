@@ -27,15 +27,19 @@
 
 (defun on-erlang-mode ()
   (eglot-ensure)
+  ;; when call with magit-ediff, this value maybe is nil, and this will cause ediff failed
   (let ((str (buffer-file-name)))
-    (when (string-match "/docker:firest@\\(.*\\):/home/firest/\\(.*?\\)/.*" str)
+    (when (and str
+               (string-match
+                "/docker:firest@\\(.*\\):/home/firest/\\(.*?\\)/.*"
+                str))
       (setq-local benko (match-string 1 str)
-                  namo (match-string 2 str)))
-    (local-set-key (kbd "C-C l m") 'erl/make-on-container)
-    (local-set-key (kbd "C-C l r") 'erl/make-run-on-container)
-    (local-set-key (kbd "C-C l c") 'erl/stop-emqx-on-container)
-    (local-set-key (kbd "C-C l s") 'erl/shelll-on-container)
-    (local-set-key (kbd "C-C l h") 'erl/halt-on-container)))
+                  namo (match-string 2 str))
+      (local-set-key (kbd "C-C l m") 'erl/make-on-container)
+      (local-set-key (kbd "C-C l r") 'erl/make-run-on-container)
+      (local-set-key (kbd "C-C l c") 'erl/stop-emqx-on-container)
+      (local-set-key (kbd "C-C l s") 'erl/shelll-on-container)
+      (local-set-key (kbd "C-C l h") 'erl/halt-on-container))))
 
 (add-hook 'erlang-mode-hook 'on-erlang-mode)
 
