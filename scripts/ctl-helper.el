@@ -63,7 +63,7 @@
                      (shell-command-to-string (format "docker exec %s ls ~" benko))
                      "\n"))))
     (find-file
-     (format "/docker:firest@%s:/home/firest/" benko))))
+     (format "/docker:firest@%s:/home/firest/%s" benko projekto))))
 
 (defmacro with-container-cmd-channel (container &rest body)
   `(let* ((channel-name (cl-gentemp))
