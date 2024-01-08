@@ -72,7 +72,14 @@
                                          (tex "TeX")
                                          (latex "[LaTeX]TeX")
                                          (shell-script "bash")
-                                         (gnuplot "Gnuplot") (ocaml "Caml") (caml "Caml") (sql "SQL") (sqlite "sql") (R-mode "R") (csharp "csharp")))
+                                         (gnuplot "Gnuplot")
+                                         (ocaml "Caml")
+                                         (caml "Caml")
+                                         (sql "SQL")
+                                         (sqlite "sql")
+                                         (R-mode "R")
+                                         (csharp "csharp")
+                                         (json "JSON")))
 
         org-latex-minted-options
         '(("frame" "lines") ("linenos=true"))
@@ -92,6 +99,9 @@
   :hook (org-mode . org-modern-mode)
   :config
   (setq org-modern-hide-stars " "))
+
+(use-package json-mode
+  :straight t)
 
 (use-package ox-hugo
   :straight t
@@ -400,26 +410,26 @@
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
 
-;; (use-package rime
-;;   :straight t
-;;   :config
-;;   (setq rime-posframe-properties
-;;         (list :background-color "#333333"
-;;               :foreground-color "#dcdccc"
-;;               :internal-border-width 10))
+(use-package rime
+  :straight t
+  :config
+  (setq rime-posframe-properties
+        (list :background-color "#333333"
+              :foreground-color "#dcdccc"
+              :internal-border-width 10))
 
-;;   (setq  rime-show-candidate 'posframe)
+  (setq  rime-show-candidate 'posframe)
 
-;;   (setq rime-disable-predicates
-;;         '(rime-predicate-after-alphabet-char-p
-;;           rime-predicate-prog-in-code-p
-;;           rime-predicate-in-code-string-p
-;;           rime-predicate-space-after-cc-p))
+  (setq rime-disable-predicates
+        '(rime-predicate-after-alphabet-char-p
+          rime-predicate-prog-in-code-p
+          rime-predicate-in-code-string-p
+          rime-predicate-space-after-cc-p))
 
-;;   (define-key rime-active-mode-map (kbd "M-j") 'rime-inline-ascii)
+  (define-key rime-active-mode-map (kbd "M-j") 'rime-inline-ascii)
 
-;;   :custom
-;;   (default-input-method "rime"))
+  :custom
+  (default-input-method "rime"))
 
 (use-package erlang)
 
@@ -428,6 +438,9 @@
   :config
   (add-to-list 'eglot-server-programs
                '(erlang-mode . ("erlang_ls"))))
+
+(use-package ox-reveal
+  :straight t)
 
 (defun prog-face ()
   (face-remap-add-relative 'hl-line
@@ -482,3 +495,4 @@
   :straight t
   :config
   (load-theme 'zenburn t))
+(put 'downcase-region 'disabled nil)
