@@ -25,8 +25,27 @@
   (with-current-container
    (send "halt().")))
 
+(defvar-local format-on-save t)
+(defun toggle-erl-format ()
+  (interactive)
+  (setq format-on-save (not format-on-save)))
+
 (defun on-erlang-mode ()
   (eglot-ensure)
+  (setq-local switch t)
+  (add-hook 'after-save-hook
+            (lambda ()
+              (when (and switch format-on-save)
+                (unwind-protect
+		            (ignore-errors
+                      (eglot-format-buffer))
+                  (progn
+                    (setq switch nil)
+                    (save-buffer)
+                    (setq switch t)))))
+            0
+            t)
+
   ;; when call with magit-ediff, this value maybe is nil, and this will cause ediff failed
   (let ((str (buffer-file-name)))
     (when (and str
@@ -40,6 +59,7 @@
       (local-set-key (kbd "C-C l c") 'erl/stop-emqx-on-container)
       (local-set-key (kbd "C-C l s") 'erl/shelll-on-container)
       (local-set-key (kbd "C-C l h") 'erl/halt-on-container))))
+
 
 (add-hook 'erlang-mode-hook 'on-erlang-mode)
 

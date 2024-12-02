@@ -38,7 +38,8 @@
   :bind
   ("C-c c" . (lambda () (interactive) (org-capture nil)))
   :config
-  (setq org-use-sub-superscripts '{}
+  (setq org-startup-with-inline-images t
+        org-use-sub-superscripts '{}
         org-export-with-sub-superscripts '{}
         org-src-fontify-natively t
         org-confirm-babel-evaluate nil
@@ -99,9 +100,6 @@
   :hook (org-mode . org-modern-mode)
   :config
   (setq org-modern-hide-stars " "))
-
-(use-package json-mode
-  :straight t)
 
 (use-package ox-hugo
   :straight t
@@ -310,14 +308,16 @@
   :straight t
   :mode ("\\.plantuml\\'" . plantuml-mode)
   :config
-  (setq plantuml-jar-path  "~/.local/lib/plantuml.jar")
-  (setq plantuml-default-exec-mode 'jar)
+;  (setq plantuml-jar-path  "~/.local/lib/plantuml.jar")
+  (setq plantuml-executable-path "/usr/bin/plantuml")
+  ;(setq plantuml-default-exec-mode 'jar)
+  (setq plantuml-default-exec-mode 'executable)
   (setq plantuml-output-type "txt")
-  (setq org-plantuml-jar-path (expand-file-name "~/.local/lib/plantuml.jar"))
+;  (setq org-plantuml-jar-path (expand-file-name "~/.local/lib/plantuml.jar"))
+  (setq org-plantuml-exec-mode 'plantuml)
   (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
   (org-babel-do-load-languages 'org-babel-load-languages
                                '((plantuml . t)
-                                 (csharp . t)
                                  (lisp . t))))
 
 (use-package org-static-blog
@@ -442,6 +442,52 @@
 (use-package ox-reveal
   :straight t)
 
+(use-package sly
+  :straight t
+  :config
+  (setq inferior-lisp-program "sbcl"))
+
+(use-package org-roam
+  :straight t
+  :custom
+  (org-roam-directory (file-truename "~/.emacs.d/roam/"))
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         ;; Dailies
+         ("C-c n j" . org-roam-dailies-capture-today))
+  :config
+  (org-roam-db-autosync-mode)
+  ;; If using org-roam-protocol
+  (require 'org-roam-protocol))
+
+(defun time-based-file-name (extend)
+  (format "%s.%s" (format-time-string "%Y-%m-%d-%H-%M-%S") extend))
+
+(defun org-roam-img-uid()
+  (format "/tmp/%s-%s"
+          (buffer-hash)
+          (time-based-file-name "png")))
+
+(use-package simple-httpd
+  :straight (simple-httpd
+             :type git
+             :host github
+             :repo "skeeto/emacs-web-server"
+             :branch "master"))
+
+(use-package org-roam-ui
+  :straight t
+  :after org-roam ;; or :after org
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
+
+
 (defun prog-face ()
   (face-remap-add-relative 'hl-line
                            :background "forest green")
@@ -476,7 +522,7 @@
 (global-display-line-numbers-mode)
 (global-hl-line-mode 1)
 (global-undo-tree-mode)
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+;(add-hook 'before-save-hook 'delete-trailing-whitespace)
 (setq create-lockfiles nil)
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
