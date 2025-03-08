@@ -65,6 +65,23 @@
     (find-file
      (format "/docker:firest@%s:/home/firest/%s" benko projekto))))
 
+(defun open-container-with-uid ()
+  (interactive)
+  (let* ((benko (completing-read
+                 "Elektu unu laborbenkon: "
+                 (split-string
+                  (shell-command-to-string "docker container ls --format '{{.Names}}'")
+                  "\n")))
+         (username (shell-cmd (format "docker exec --user=1000 %s whoami" benko)))
+
+         (projekto (completing-read
+                    "Elektu unu projekto"
+                    (split-string
+                     (shell-command-to-string (format "docker exec --user=1000 %s ls /home/%s" benko username))
+                     "\n"))))
+    (find-file
+     (format "/docker:%s@%s:/home/%s/%s" username benko username projekto))))
+
 (defmacro with-container-cmd-channel (container &rest body)
   `(let* ((channel-name (cl-gentemp))
           (channel
@@ -88,6 +105,13 @@
          (with-container-cmd-channel benko
                                      ,@body)))))
 
+(defun shell-cmd (cmd)
+  (string-trim 
+   (replace-regexp-in-string "[\n]+" " " 
+    (shell-command-to-string cmd))))
+
+
 (add-hook 'find-file-hook 'ctl/vc-off-if-remote)
 
 (provide 'ctl-helper)
+

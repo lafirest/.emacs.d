@@ -7,6 +7,8 @@
 (require 'ctl-helper)
 (require 'erl-helper)
 
+(straight-use-package 'project)
+
 (use-package exec-path-from-shell
   :straight t
   :init
@@ -413,12 +415,16 @@
 (use-package rime
   :straight t
   :config
+  (setq rime-user-data-dir "~/.emacs.d/rime")
+  
   (setq rime-posframe-properties
         (list :background-color "#333333"
               :foreground-color "#dcdccc"
               :internal-border-width 10))
 
   (setq  rime-show-candidate 'posframe)
+
+  (setq rime-posframe-style 'vertical)
 
   (setq rime-disable-predicates
         '(rime-predicate-after-alphabet-char-p
@@ -486,6 +492,7 @@
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))
+
 
 
 (defun prog-face ()

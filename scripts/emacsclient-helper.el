@@ -26,7 +26,17 @@
     (frame-helper/move-frame-to-center)))
 
 (defun emacsclient/emacs-everywhere-init ()
-  (emacsclient/emacs-everywhere-set-frame-position)
+  (modify-frame-parameters (selected-frame)
+                           '((border-width . 0)
+                             (menu-bar-lines . 0)
+                             (tool-bar-lines . 0)
+                             (tab-bar-lines . 0)
+                             (undecorated . t)
+                             (skip-taskbar . t)
+                             (mode-line-format . nil)
+                             (header-line-format . 'none)))
+
+;;  (emacsclient/emacs-everywhere-set-frame-position)
   (setq mode-line-format nil)
   ;; make sure the mode line is hidden
   (add-variable-watcher mode-line-format
